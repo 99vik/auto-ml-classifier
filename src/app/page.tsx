@@ -1,16 +1,21 @@
 'use client';
 
-export default function Home() {
+import Papa from 'papaparse';
+
+export default function Page() {
   function handleFileUpload(e: any) {
     const file = e.target.files[0];
-    const reader = new FileReader();
+    console.log(file);
 
-    reader.onload = (e: any) => {
-      const data = e.target.result;
-      console.log(data);
-    };
-
-    reader.readAsText(file);
+    Papa.parse(file, {
+      complete: (result) => {
+        console.log(result);
+        console.log(result.data[1]);
+      },
+      error: (error) => {
+        console.error(error);
+      },
+    });
   }
 
   return (
