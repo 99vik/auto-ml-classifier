@@ -14,7 +14,6 @@ const LINKS = [
 
 export default function SideNav() {
   const pathname = usePathname();
-  console.log(pathname);
   return (
     <nav className="w-1/5 space-y-6 bg-background border-r px-3 py-4">
       <Link href="/" className="text-primary font-semibold text-lg">
