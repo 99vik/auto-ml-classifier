@@ -3,25 +3,43 @@
 import { cn } from '@/lib/utils';
 import { FileSpreadsheet } from 'lucide-react';
 import { useState } from 'react';
-import Dropzone from 'react-dropzone';
+import Dropzone, { FileRejection } from 'react-dropzone';
 import { Button } from './ui/button';
+import uploadCsv from '@/actions';
 
 export default function DropzoneComp() {
   const [isDragOver, setIsDragOver] = useState(false);
+
+  async function onDropAccepted(files: File[]) {
+    setIsDragOver(false);
+    const file = files[0];
+    const arrayBuffer = await file.arrayBuffer();
+    const uint8Array = new Uint8Array(arrayBuffer);
+
+    uploadCsv(uint8Array, file.name);
+  }
+
+  function onDropRejected(files: FileRejection[]) {
+    setIsDragOver(false);
+    console.error('rejected');
+    // toast({
+    //   title: "Error has occurred.",
+    //   description: files[0].errors[0].message,
+    //   variant: "destructive",
+    // });
+  }
 
   return (
     <Dropzone
       // disabled={isUploading}
       onDragEnter={() => setIsDragOver(true)}
       onDragLeave={() => setIsDragOver(false)}
-      // onDropAccepted={onDropAccepted}
-      // onDropRejected={onDropRejected}
+      onDropAccepted={onDropAccepted}
+      onDropRejected={onDropRejected}
       maxFiles={1}
-      //   accept={{
-      //     'image/png': ['.png'],
-      //     'image/jpeg': ['.jpeg'],
-      //     'image/jpg': ['.jpg'],
-      //   }}
+      accept={{
+        'text/csv': ['.csv'],
+      }}
     >
       {({ getRootProps, getInputProps }) => (
         <div
