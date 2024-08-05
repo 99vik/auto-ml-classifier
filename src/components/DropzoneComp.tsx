@@ -1,22 +1,26 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { FileSpreadsheet } from 'lucide-react';
+import { FileSpreadsheet, LoaderCircle } from 'lucide-react';
 import { useState } from 'react';
 import Dropzone, { FileRejection } from 'react-dropzone';
 import { Button } from './ui/button';
 import uploadCsv from '@/actions';
+import { useMutation } from '@tanstack/react-query';
 
 export default function DropzoneComp() {
   const [isDragOver, setIsDragOver] = useState(false);
 
+  const { mutate: uploadFile, isPending } = useMutation({
+    mutationKey: ['csv-upload'],
+    mutationFn: uploadCsv,
+  });
   async function onDropAccepted(files: File[]) {
     setIsDragOver(false);
     const file = files[0];
     const arrayBuffer = await file.arrayBuffer();
     const uint8Array = new Uint8Array(arrayBuffer);
-
-    uploadCsv(uint8Array, file.name);
+    uploadFile({ fileData: uint8Array, fileName: file.name });
   }
 
   function onDropRejected(files: FileRejection[]) {
@@ -31,7 +35,7 @@ export default function DropzoneComp() {
 
   return (
     <Dropzone
-      // disabled={isUploading}
+      disabled={isPending}
       onDragEnter={() => setIsDragOver(true)}
       onDragLeave={() => setIsDragOver(false)}
       onDropAccepted={onDropAccepted}
@@ -51,15 +55,24 @@ export default function DropzoneComp() {
         >
           <input {...getInputProps()} />
           <div className="flex flex-col items-center gap-1 text-foreground">
-            <FileSpreadsheet size={30} className="mb-2" />
-            <p>
-              <span className="font-semibold">Click or drag</span> here to
-              upload
-            </p>
-            <p className="text-xs text-muted-foreground">
-              Only works with CSV files
-            </p>
-            <Button className="mt-3">Choose file</Button>
+            {isPending ? (
+              <>
+                <LoaderCircle size={30} className="animate-spin" />
+                <p className="font-semibold">Uploading...</p>
+              </>
+            ) : (
+              <>
+                <FileSpreadsheet size={30} className="mb-2" />
+                <p>
+                  <span className="font-semibold">Click or drag</span> here to
+                  upload
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Only works with CSV files
+                </p>
+                <Button className="mt-3">Choose file</Button>
+              </>
+            )}
           </div>
         </div>
       )}
