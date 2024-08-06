@@ -32,17 +32,28 @@ export default function UploadDialog() {
           <CsvDropzone
             setFile={setFile}
             setPreview={() => setStep('preview')}
-            // closeDialog={() => setOpen(false)}
           />
         </DialogContent>
       ) : (
-        <DialogContent className="w-full pb-3" aria-describedby={undefined}>
+        <DialogContent className="w-full pb-5" aria-describedby={undefined}>
           <DialogTitle>Preview CSV file</DialogTitle>
           <div className="h-px w-full bg-foreground/30" />
           <CsvPreview file={file!} />
-          <p className="sticky text-center text-sm text-muted-foreground -mt-2">
+          <p className="text-center text-sm text-muted-foreground -mt-3">
             Showing first 50 rows
           </p>
+          <div className="flex justify-end gap-2 -mt-6">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setStep('upload');
+                setFile(null);
+              }}
+            >
+              Back
+            </Button>
+            <Button>Import</Button>
+          </div>
         </DialogContent>
       )}
     </Dialog>
