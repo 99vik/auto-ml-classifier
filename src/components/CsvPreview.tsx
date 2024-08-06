@@ -8,25 +8,27 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { cn } from '@/lib/utils';
 import Papa from 'papaparse';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Checkbox } from './ui/checkbox';
-import { cn } from '@/lib/utils';
+
 export default function CsvPreview({
   file,
   checkedColumns,
   setCheckedColumns,
+  isLoading,
 }: {
   file: File;
   checkedColumns: number[];
   setCheckedColumns: Dispatch<SetStateAction<number[]>>;
+  isLoading: boolean;
 }) {
   const [data, setData] = useState<string[][]>([]);
 
   useEffect(() => {
     Papa.parse(file, {
       complete: (result: any) => {
-        console.log(result);
         setData(result.data as string[][]);
         setCheckedColumns(Array.from(Array(result.data[0].length).keys()));
       },
@@ -37,7 +39,11 @@ export default function CsvPreview({
   }, [file, setCheckedColumns]);
 
   if (data.length === 0) {
-    return null;
+    return (
+      <div className="h-[300px] w-full flex flex-col items-center gap-2 justify-center">
+        <p className="animate-pulse text-lg">Loading data...</p>
+      </div>
+    );
   }
 
   function checkboxChange(CheckedState: string | boolean, columnIndex: number) {
@@ -51,7 +57,12 @@ export default function CsvPreview({
   }
 
   return (
-    <div className="h-[450px] rounded-lg relative overflow-auto w-full border-b">
+    <div
+      className={cn(
+        'h-[450px] rounded-lg relative overflow-auto w-full border-b',
+        isLoading && 'opacity-60 pointer-events-none'
+      )}
+    >
       <Table>
         <TableHeader className="sticky -translate-y-px top-0 bg-background ">
           <TableRow>

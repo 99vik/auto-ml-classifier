@@ -1,12 +1,10 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { FileSpreadsheet, LoaderCircle } from 'lucide-react';
+import { FileSpreadsheet } from 'lucide-react';
 import { useState } from 'react';
 import Dropzone, { FileRejection } from 'react-dropzone';
 import { Button } from './ui/button';
-import uploadCsv from '@/actions';
-import { useMutation } from '@tanstack/react-query';
 
 export default function CsvDropzone({
   setPreview,
@@ -17,30 +15,11 @@ export default function CsvDropzone({
 }) {
   const [isDragOver, setIsDragOver] = useState(false);
 
-  const { mutate: uploadFile, isPending } = useMutation({
-    mutationKey: ['csv-upload'],
-    mutationFn: uploadCsv,
-    onSuccess: () => setPreview(),
-  });
   async function onDropAccepted(files: File[]) {
     setIsDragOver(false);
     const file = files[0];
     setPreview();
     setFile(file);
-    // console.log(file);
-    // Papa.parse(file, {
-    //   complete: (result) => {
-    //     console.log(result);
-    //     console.log(result.data[0]);
-    //     //   sendFile(file);
-    //   },
-    //   error: (error) => {
-    //     console.error(error);
-    //   },
-    // });
-    // const arrayBuffer = await file.arrayBuffer();
-    // const uint8Array = new Uint8Array(arrayBuffer);
-    // uploadFile({ fileData: uint8Array, fileName: file.name });
   }
 
   function onDropRejected(files: FileRejection[]) {
@@ -55,7 +34,6 @@ export default function CsvDropzone({
 
   return (
     <Dropzone
-      disabled={isPending}
       onDragEnter={() => setIsDragOver(true)}
       onDragLeave={() => setIsDragOver(false)}
       onDropAccepted={onDropAccepted}

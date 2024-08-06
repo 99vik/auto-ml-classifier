@@ -6,28 +6,35 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Upload } from 'lucide-react';
+import { Loader, Upload } from 'lucide-react';
 import { Button } from './ui/button';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import CsvDropzone from './CsvDropzone';
 import CsvPreview from './CsvPreview';
 import Papa from 'papaparse';
 import uploadCsv from '@/actions';
 
 export default function UploadDialog() {
+  const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState<'upload' | 'preview'>('upload');
   const [file, setFile] = useState<File | null>(null);
   const [checkedColumns, setCheckedColumns] = useState<number[]>([]);
 
   async function handleImport() {
+    setIsLoading(true);
     Papa.parse(file!, {
-      complete: (result: { data: string[][] }) => {
+      complete: async (result: { data: string[][] }) => {
         const data = result.data.map((row) =>
           checkedColumns.map((index) => row[index])
         );
         data.pop();
-        uploadCsv({ dataArray: data, fileName: file!.name });
+        await uploadCsv({ dataArray: data, fileName: file!.name });
+        setOpen(false);
+        setTimeout(() => {
+          setIsLoading(false);
+          setStep('upload');
+        }, 300);
       },
       error: (error) => {
         console.error(error);
@@ -53,19 +60,24 @@ export default function UploadDialog() {
           />
         </DialogContent>
       ) : (
-        <DialogContent className="w-full pb-5" aria-describedby={undefined}>
+        <DialogContent
+          className="w-full  min-h-[300px] pb-5"
+          aria-describedby={undefined}
+        >
           <DialogTitle>Preview CSV file</DialogTitle>
           <div className="h-px w-full bg-foreground/30" />
           <CsvPreview
             file={file!}
             checkedColumns={checkedColumns}
             setCheckedColumns={setCheckedColumns}
+            isLoading={isLoading}
           />
           <p className="text-center text-sm text-muted-foreground -mt-3">
             Showing first 50 rows
           </p>
           <div className="flex justify-end gap-2 -mt-6">
             <Button
+              disabled={isLoading}
               variant="outline"
               onClick={() => {
                 setStep('upload');
@@ -74,7 +86,17 @@ export default function UploadDialog() {
             >
               Back
             </Button>
-            <Button onClick={handleImport}>Import</Button>
+            <Button
+              className="w-[76px]"
+              disabled={isLoading}
+              onClick={handleImport}
+            >
+              {isLoading ? (
+                <Loader size={16} className="animate-spin" />
+              ) : (
+                'Import'
+              )}
+            </Button>
           </div>
         </DialogContent>
       )}
