@@ -34,33 +34,33 @@ export default function CsvPreview({ file }: { file: File }) {
   }
 
   return (
-    <div className="">
+    <div className="h-[500px] rounded-lg relative overflow-auto w-full border-b">
       <Table>
-        <TableHeader>
+        <TableHeader className="sticky -translate-y-px top-0 bg-background ">
           <TableRow>
             {data[0].map((column) => (
-              <TableHead key={column} className="font-medium">
+              <TableHead
+                key={column}
+                className="text-primary border bg-secondary"
+              >
                 {column}
               </TableHead>
             ))}
           </TableRow>
         </TableHeader>
-        <TableBody className="max-h-[450px] overflow-x-auto">
-          {data.slice(1, 5).map((row, indexRow) => (
+        <TableBody className="">
+          {data.slice(1, 51).map((row, indexRow) => (
             <TableRow key={indexRow}>
               {row.map((column, indexColumn) => (
-                <TableCell key={`${indexRow}-${indexColumn}`}>
+                <TableCell
+                  className="border-r border-l"
+                  key={`${indexRow}-${indexColumn}`}
+                >
                   {column}
                 </TableCell>
               ))}
             </TableRow>
           ))}
-          {/* <TableRow>
-            <TableCell className="font-medium">INV001</TableCell>
-            <TableCell>Paid</TableCell>
-            <TableCell>Credit Card</TableCell>
-            <TableCell className="text-right">$250.00</TableCell>
-          </TableRow> */}
         </TableBody>
       </Table>
     </div>

@@ -36,10 +36,13 @@ export default function UploadDialog() {
           />
         </DialogContent>
       ) : (
-        <DialogContent className="w-full" aria-describedby={undefined}>
+        <DialogContent className="w-full pb-3" aria-describedby={undefined}>
           <DialogTitle>Preview CSV file</DialogTitle>
           <div className="h-px w-full bg-foreground/30" />
           <CsvPreview file={file!} />
+          <p className="sticky text-center text-sm text-muted-foreground -mt-2">
+            Showing first 50 rows
+          </p>
         </DialogContent>
       )}
     </Dialog>
