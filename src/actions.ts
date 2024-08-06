@@ -4,12 +4,13 @@ import fs from 'fs/promises';
 import path from 'path';
 
 export default async function uploadCsv({
-  fileData,
+  dataArray,
   fileName,
 }: {
-  fileData: Uint8Array;
+  dataArray: string[][];
   fileName: string;
 }) {
+  const fileData = dataArray.map((row) => row.join(',')).join('\n');
   const filePath = path.join(process.cwd(), 'public', 'csv', fileName);
-  await fs.writeFile(filePath, Buffer.from(fileData));
+  await fs.writeFile(filePath, fileData);
 }

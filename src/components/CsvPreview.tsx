@@ -9,13 +9,20 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import Papa from 'papaparse';
-import { useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Checkbox } from './ui/checkbox';
 import { cn } from '@/lib/utils';
-export default function CsvPreview({ file }: { file: File }) {
+export default function CsvPreview({
+  file,
+  checkedColumns,
+  setCheckedColumns,
+}: {
+  file: File;
+  checkedColumns: number[];
+  setCheckedColumns: Dispatch<SetStateAction<number[]>>;
+}) {
   const [data, setData] = useState<string[][]>([]);
-  const [checkedColumns, setCheckedColumns] = useState<number[]>([]);
-  console.log(checkedColumns);
+
   useEffect(() => {
     Papa.parse(file, {
       complete: (result: any) => {
@@ -27,14 +34,13 @@ export default function CsvPreview({ file }: { file: File }) {
         console.error(error);
       },
     });
-  }, [file]);
+  }, [file, setCheckedColumns]);
 
   if (data.length === 0) {
     return null;
   }
 
   function checkboxChange(CheckedState: string | boolean, columnIndex: number) {
-    console.log(CheckedState, columnIndex);
     if (CheckedState) {
       setCheckedColumns((prevState) => [...prevState, columnIndex]);
     } else {
