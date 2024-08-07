@@ -1,6 +1,6 @@
 'use server';
 
-import fs from 'fs/promises';
+import fs, { stat } from 'fs/promises';
 import path from 'path';
 
 export default async function uploadCsv({
@@ -13,4 +13,22 @@ export default async function uploadCsv({
   const fileData = dataArray.map((row) => row.join(',')).join('\n');
   const filePath = path.join(process.cwd(), 'public', 'csv', fileName);
   await fs.writeFile(filePath, fileData);
+}
+
+export async function readFiles() {
+  const csvDir = path.join(process.cwd(), 'public', 'csv');
+  const fileNames = await fs.readdir(csvDir);
+
+  const files = await Promise.all(
+    fileNames.map(async (fileName) => {
+      const { size, mtime } = await fs.stat(path.join(csvDir, fileName));
+      return {
+        name: fileName.replace('.csv', ''),
+        size: size,
+        createdAt: mtime,
+        path: path.join(csvDir, fileName),
+      };
+    })
+  );
+  return files;
 }
