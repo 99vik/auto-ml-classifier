@@ -14,7 +14,7 @@ import CsvPreview from './CsvPreview';
 import Papa from 'papaparse';
 import uploadCsv from '@/actions';
 
-export default function UploadDialog() {
+export default function UploadDialog({ refetch }: { refetch: () => void }) {
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState<'upload' | 'preview'>('upload');
@@ -30,6 +30,7 @@ export default function UploadDialog() {
         );
         data.pop();
         await uploadCsv({ dataArray: data, fileName: file!.name });
+        refetch();
         setOpen(false);
         setTimeout(() => {
           setIsLoading(false);

@@ -54,7 +54,7 @@ export default function CsvFileDataDialog({
   return (
     <Dialog onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button size="sm" variant="outline">
+        <Button size="sm" variant="outline" className="w-full">
           View data
         </Button>
       </DialogTrigger>
