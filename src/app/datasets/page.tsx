@@ -26,8 +26,6 @@ export default function Page() {
     refetchOnWindowFocus: false,
   });
 
-  console.log(checkedBoxes.length);
-
   return (
     <div className="h-full">
       <div className="flex items-center justify-between">
@@ -37,6 +35,7 @@ export default function Page() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
+                disabled={checkedBoxes.length === 0}
                 variant="outline"
                 className="relative focus-visible:ring-0"
               >
@@ -52,23 +51,20 @@ export default function Page() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem className="gap-2 text-destructive hover:text-destructive">
+              <DropdownMenuItem
+                onClick={async () => {
+                  await removeFiles(checkedBoxes);
+                  setCheckedBoxes([]);
+                  setAllChecked(false);
+                  refetch();
+                }}
+                className="gap-2 text-destructive hover:text-destructive"
+              >
                 <Trash size={12} />
                 Delete datasets
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-
-          {/* <Button
-            onClick={async () => {
-              await removeFiles(checkedBoxes);
-              refetch();
-            }}
-            variant="destructive"
-            className="gap-2"
-          >
-            <Trash size={16} />
-          </Button> */}
         </div>
       </div>
       <div className="my-2 h-px w-full bg-foreground/20" />
