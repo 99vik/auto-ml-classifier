@@ -4,10 +4,16 @@ import { readFiles, removeFiles } from '@/actions';
 import CsvFileDataDialog from '@/components/CsvFileDataDialog';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import UploadDialog from '@/components/UploadDialog';
-import { formatBytes } from '@/lib/utils';
+import { cn, formatBytes } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
-import { Trash } from 'lucide-react';
+import { Ellipsis, Trash } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Page() {
@@ -28,7 +34,32 @@ export default function Page() {
         <h1 className="text-3xl font-semibold">Datasets</h1>
         <div className="flex gap-2 items-center">
           <UploadDialog refetch={refetch} />
-          <Button
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                className="focus-visible:ring-0 relative"
+              >
+                <div
+                  className={cn(
+                    'text-secondary text-xs hidden bg-primary size-4 items-center justify-center rounded-full aspect-square absolute -top-1 -right-1',
+                    checkedBoxes.length > 0 && 'flex'
+                  )}
+                >
+                  {checkedBoxes.length}
+                </div>
+                <Ellipsis size={20} />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem className="text-destructive  gap-2 hover:text-destructive">
+                <Trash size={12} />
+                Delete datasets
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* <Button
             onClick={async () => {
               await removeFiles(checkedBoxes);
               refetch();
@@ -37,8 +68,7 @@ export default function Page() {
             className="gap-2"
           >
             <Trash size={16} />
-            Remove dataset
-          </Button>
+          </Button> */}
         </div>
       </div>
       <div className="h-px w-full bg-foreground/20 my-2" />
