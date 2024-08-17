@@ -18,6 +18,18 @@ import {
 } from "@/components/ui/select";
 import { useState } from "react";
 import { formatBytes } from "@/lib/utils";
+import { MoveRight } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { getCsvFileData } from "@/actions";
+import Papa from "papaparse";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface File {
   name: string;
@@ -26,17 +38,28 @@ interface File {
   path: string;
   samples: number;
   columnsNum: number;
-  columns: string[];
+  columns: unknown;
   createdTime: Date;
 }
 
 export default function DatasetSelector({ files }: { files: File[] }) {
   const [selectedFile, setSelectedFile] = useState<null | File>(null);
 
+  const { data, isLoading } = useQuery({
+    queryKey: ["csv-file-data", selectedFile?.path],
+    queryFn: async () => {
+      const fileData = await getCsvFileData(selectedFile?.path!);
+      const data = Papa.parse(fileData, {
+        header: true,
+      });
+      return data;
+    },
+    enabled: selectedFile !== null,
+  });
+
   function handleFileChange(filePath: string) {
     const file = files.find((file) => file.path === filePath);
     setSelectedFile(file!);
-    console.log(file);
   }
 
   return (
@@ -62,9 +85,6 @@ export default function DatasetSelector({ files }: { files: File[] }) {
             </SelectContent>
           </Select>
         </CardContent>
-        {/* <CardFooter>
-        <Button>Start Training</Button>
-      </CardFooter> */}
       </Card>
       {selectedFile && (
         <Card className="mt-4">
@@ -97,6 +117,7 @@ export default function DatasetSelector({ files }: { files: File[] }) {
               <p className="text-sm font-medium text-muted-foreground">
                 Columns
               </p>
+              {/* @ts-ignore */}
               <p>{selectedFile.columns.join(", ")}</p>
             </div>
             <div className="flex items-center justify-between">
@@ -113,27 +134,48 @@ export default function DatasetSelector({ files }: { files: File[] }) {
                 <p>{selectedFile.createdTime.toLocaleDateString("en-DE")}</p>
               </div>
             </div>
-            {/* <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">
-                Samples: {selectedFile.samples}
-              </span>
-              <span className="text-sm font-medium">
-                Size: {formatBytes(selectedFile.sizeInBytes)}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">
-                Number of columns: {selectedFile.features}
-              </span>
-              <span className="text-sm font-medium">
-                Created at:{" "}
-                {selectedFile.createdTime.toLocaleString("en-DE", {
-                  day: "numeric",
-                  month: "numeric",
-                  year: "numeric",
-                })}
-              </span>
-            </div> */}
+          </CardContent>
+          <CardFooter className="border-t pt-4">
+            <Button className="w-full gap-2">
+              Train model
+              <MoveRight />
+            </Button>
+          </CardFooter>
+        </Card>
+      )}
+      {data && (
+        <Card className="mt-4">
+          <CardHeader>
+            <CardTitle className="text-lg">Dataset preview</CardTitle>
+            <CardDescription>
+              Showing the first 10 rows of the selected dataset.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  {data.meta.fields!.map((column) => (
+                    <TableHead key={column}>
+                      <div className="flex w-full items-center gap-2">
+                        {column}
+                      </div>
+                    </TableHead>
+                  ))}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {data.data.slice(1, 10).map((row, indexRow) => (
+                  <TableRow key={indexRow}>
+                    {Object.values(row!).map((column, indexColumn) => (
+                      <TableCell key={`${indexRow}-${indexColumn}`}>
+                        {column!}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
       )}

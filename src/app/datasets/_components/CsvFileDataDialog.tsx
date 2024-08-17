@@ -18,7 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 export default function CsvFileDataDialog({
   fileName,
@@ -35,22 +35,11 @@ export default function CsvFileDataDialog({
       const data = Papa.parse(fileData, {
         header: true,
       });
-      //   console.log(data);
       return data;
     },
     enabled: isOpen,
   });
 
-  // useEffect(() => {
-  //     const fileData = await getCsvFileData(filePath);
-  //     const data = Papa.parse(fileData, {
-  //       header: true,
-  //       skipEmptyLines: true,
-  //       dynamicTyping: true,
-  //     });
-  //     console.log('--------------------');
-  //     console.log(data.meta.fields);
-  //     }, [filePath]);
   return (
     <Dialog onOpenChange={setIsOpen}>
       <DialogTrigger asChild>

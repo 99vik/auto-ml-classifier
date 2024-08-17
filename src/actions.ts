@@ -3,6 +3,7 @@
 import fs from "fs/promises";
 import path from "path";
 import Papa from "papaparse";
+import { revalidatePath } from "next/cache";
 
 export default async function uploadCsv({
   dataArray,
@@ -14,6 +15,7 @@ export default async function uploadCsv({
   const fileData = dataArray.map((row) => row.join(",")).join("\n");
   const filePath = path.join(process.cwd(), "public", "csv", fileName);
   await fs.writeFile(filePath, fileData);
+  revalidatePath("/train");
 }
 
 export async function getCsvFileData(filePath: string) {
@@ -31,7 +33,6 @@ export async function readFiles() {
       const { size, mtime, birthtime } = await fs.stat(
         path.join(csvDir, fileName),
       );
-      // const rowCount = await getRowCount(path.join(csvDir, fileName));
       return {
         name: fileName.replace(".csv", ""),
         sizeInBytes: size,
@@ -55,4 +56,5 @@ export async function removeFiles(filePaths: string[]) {
       await fs.unlink(filePath);
     }),
   );
+  revalidatePath("/train");
 }
