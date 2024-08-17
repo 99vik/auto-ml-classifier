@@ -9,6 +9,7 @@ import {
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -26,12 +27,15 @@ export default async function Page() {
       <div className="my-2 h-px w-full bg-foreground/20" />
       <Card>
         <CardHeader>
-          <CardTitle>Select Dataset</CardTitle>
+          <CardTitle className="text-lg">Select Dataset</CardTitle>
+          <CardDescription>
+            Select a dataset to continue training your classification model.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
             <Select>
-              <SelectTrigger className="w-fit">
+              <SelectTrigger className="">
                 <SelectValue placeholder="Select dataset" />
               </SelectTrigger>
               <SelectContent>

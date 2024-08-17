@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Dialog,
@@ -6,10 +6,10 @@ import {
   DialogDescription,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { getCsvFileData } from '@/actions';
-import Papa from 'papaparse';
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { getCsvFileData } from "@/actions";
+import Papa from "papaparse";
 import {
   Table,
   TableBody,
@@ -17,9 +17,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from './ui/table';
-import { useEffect, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+} from "@/components/ui/table";
+import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 export default function CsvFileDataDialog({
   fileName,
   filePath,
@@ -29,7 +29,7 @@ export default function CsvFileDataDialog({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const { data, isLoading } = useQuery({
-    queryKey: ['csv-file-data', filePath],
+    queryKey: ["csv-file-data", filePath],
     queryFn: async () => {
       const fileData = await getCsvFileData(filePath);
       const data = Papa.parse(fileData, {
@@ -60,7 +60,7 @@ export default function CsvFileDataDialog({
       </DialogTrigger>
 
       <DialogContent
-        className="w-full  min-h-[300px] pb-5"
+        className="min-h-[300px] w-full pb-5"
         aria-describedby={undefined}
       >
         <DialogDescription hidden>File data</DialogDescription>
@@ -68,9 +68,9 @@ export default function CsvFileDataDialog({
           {fileName} csv file data
         </DialogTitle>
         <div className="h-px w-full bg-foreground/30" />
-        <div className="h-[450px] border-b rounded-lg w-full overflow-auto">
+        <div className="h-[450px] w-full overflow-auto rounded-lg border-b">
           {isLoading ? (
-            <div className="h-[450px] w-full flex flex-col items-center gap-2 justify-center">
+            <div className="flex h-[450px] w-full flex-col items-center justify-center gap-2">
               <p className="animate-pulse text-lg">Loading data...</p>
             </div>
           ) : !data ? null : (
@@ -94,7 +94,7 @@ export default function CsvFileDataDialog({
                   <TableRow key={indexRow}>
                     {Object.values(row!).map((column, indexColumn) => (
                       <TableCell
-                        className="border-r border-l"
+                        className="border-l border-r"
                         key={`${indexRow}-${indexColumn}`}
                       >
                         {column!}

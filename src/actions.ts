@@ -25,6 +25,7 @@ export async function readFiles() {
   const files = await Promise.all(
     fileNames.map(async (fileName) => {
       const { size, mtime } = await fs.stat(path.join(csvDir, fileName));
+      // const rowCount = await getRowCount(path.join(csvDir, fileName));
       return {
         name: fileName.replace(".csv", ""),
         sizeInBytes: size,

@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { cn } from '@/lib/utils';
-import { FileSpreadsheet } from 'lucide-react';
-import { useState } from 'react';
-import Dropzone, { FileRejection } from 'react-dropzone';
-import { Button } from './ui/button';
+import { cn } from "@/lib/utils";
+import { FileSpreadsheet } from "lucide-react";
+import { useState } from "react";
+import Dropzone, { FileRejection } from "react-dropzone";
+import { Button } from "../../../components/ui/button";
 
 export default function CsvDropzone({
   setPreview,
@@ -24,7 +24,7 @@ export default function CsvDropzone({
 
   function onDropRejected(files: FileRejection[]) {
     setIsDragOver(false);
-    console.error('rejected');
+    console.error("rejected");
     // toast({
     //   title: "Error has occurred.",
     //   description: files[0].errors[0].message,
@@ -40,14 +40,14 @@ export default function CsvDropzone({
       onDropRejected={onDropRejected}
       maxFiles={1}
       accept={{
-        'text/csv': ['.csv'],
+        "text/csv": [".csv"],
       }}
     >
       {({ getRootProps, getInputProps }) => (
         <div
           className={cn(
-            'flex h-[300px] items-center justify-center rounded-3xl border-2 border-dashed transition bg-secondary',
-            isDragOver && 'border-primary'
+            "flex h-[300px] items-center justify-center rounded-3xl border-2 border-dashed bg-secondary transition",
+            isDragOver && "border-primary",
           )}
           {...getRootProps()}
         >

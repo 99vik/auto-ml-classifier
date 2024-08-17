@@ -1,23 +1,23 @@
-'use client';
+"use client";
 
 import {
   Dialog,
   DialogContent,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Loader, Upload } from 'lucide-react';
-import { Button } from './ui/button';
-import { Suspense, useState } from 'react';
-import CsvDropzone from './CsvDropzone';
-import CsvPreview from './CsvPreview';
-import Papa from 'papaparse';
-import uploadCsv from '@/actions';
+} from "@/components/ui/dialog";
+import { Loader, Upload } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import CsvDropzone from "./CsvDropzone";
+import Papa from "papaparse";
+import uploadCsv from "@/actions";
+import CsvPreview from "./CsvPreview";
 
 export default function UploadDialog({ refetch }: { refetch: () => void }) {
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const [step, setStep] = useState<'upload' | 'preview'>('upload');
+  const [step, setStep] = useState<"upload" | "preview">("upload");
   const [file, setFile] = useState<File | null>(null);
   const [checkedColumns, setCheckedColumns] = useState<number[]>([]);
 
@@ -26,7 +26,7 @@ export default function UploadDialog({ refetch }: { refetch: () => void }) {
     Papa.parse(file!, {
       complete: async (result: { data: string[][] }) => {
         const data = result.data.map((row) =>
-          checkedColumns.map((index) => row[index])
+          checkedColumns.map((index) => row[index]),
         );
         data.pop();
         await uploadCsv({ dataArray: data, fileName: file!.name });
@@ -34,7 +34,7 @@ export default function UploadDialog({ refetch }: { refetch: () => void }) {
         setOpen(false);
         setTimeout(() => {
           setIsLoading(false);
-          setStep('upload');
+          setStep("upload");
         }, 300);
       },
       error: (error) => {
@@ -51,18 +51,18 @@ export default function UploadDialog({ refetch }: { refetch: () => void }) {
           Upload CSV
         </Button>
       </DialogTrigger>
-      {step === 'upload' ? (
+      {step === "upload" ? (
         <DialogContent className="w-[600px]" aria-describedby={undefined}>
           <DialogTitle>Upload CSV file</DialogTitle>
           <div className="h-px w-full bg-foreground/30" />
           <CsvDropzone
             setFile={setFile}
-            setPreview={() => setStep('preview')}
+            setPreview={() => setStep("preview")}
           />
         </DialogContent>
       ) : (
         <DialogContent
-          className="w-full  min-h-[300px] pb-5"
+          className="min-h-[300px] w-full pb-5"
           aria-describedby={undefined}
         >
           <DialogTitle>Preview CSV file</DialogTitle>
@@ -73,15 +73,15 @@ export default function UploadDialog({ refetch }: { refetch: () => void }) {
             setCheckedColumns={setCheckedColumns}
             isLoading={isLoading}
           />
-          <p className="text-center text-sm text-muted-foreground -mt-3">
+          <p className="-mt-3 text-center text-sm text-muted-foreground">
             Showing first 50 rows
           </p>
-          <div className="flex justify-end gap-2 -mt-6">
+          <div className="-mt-6 flex justify-end gap-2">
             <Button
               disabled={isLoading}
               variant="outline"
               onClick={() => {
-                setStep('upload');
+                setStep("upload");
                 setFile(null);
               }}
             >
@@ -95,7 +95,7 @@ export default function UploadDialog({ refetch }: { refetch: () => void }) {
               {isLoading ? (
                 <Loader size={16} className="animate-spin" />
               ) : (
-                'Import'
+                "Import"
               )}
             </Button>
           </div>

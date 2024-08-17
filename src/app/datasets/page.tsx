@@ -1,7 +1,6 @@
 "use client";
 
 import { readFiles, removeFiles } from "@/actions";
-import CsvFileDataDialog from "@/components/CsvFileDataDialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -10,7 +9,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import UploadDialog from "@/components/UploadDialog";
+import UploadDialog from "./_components/UploadDialog";
+import CsvFileDataDialog from "./_components/CsvFileDataDialog";
 import { cn, formatBytes } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { Ellipsis, Trash } from "lucide-react";
