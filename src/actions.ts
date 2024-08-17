@@ -2,6 +2,7 @@
 
 import fs from "fs/promises";
 import path from "path";
+import Papa from "papaparse";
 
 export default async function uploadCsv({
   dataArray,
@@ -24,13 +25,23 @@ export async function readFiles() {
   const fileNames = await fs.readdir(csvDir);
   const files = await Promise.all(
     fileNames.map(async (fileName) => {
-      const { size, mtime } = await fs.stat(path.join(csvDir, fileName));
+      const { data } = Papa.parse(
+        await fs.readFile(path.join(csvDir, fileName), "utf8"),
+      );
+      const { size, mtime, birthtime } = await fs.stat(
+        path.join(csvDir, fileName),
+      );
       // const rowCount = await getRowCount(path.join(csvDir, fileName));
       return {
         name: fileName.replace(".csv", ""),
         sizeInBytes: size,
         importedTime: mtime,
+        createdTime: birthtime,
         path: path.join(csvDir, fileName),
+        samples: data.length - 1,
+        // @ts-ignore
+        columnsNum: data[0].length - 1,
+        columns: data[0],
       };
     }),
   );

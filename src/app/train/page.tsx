@@ -1,67 +1,16 @@
 import { readFiles } from "@/actions";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import DatasetSelector from "./components/DatasetSelector";
 
 export default async function Page() {
   const files = await readFiles();
 
   return (
-    <div className="h-full">
+    <div className="min-h-full">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-semibold">Train</h1>
       </div>
       <div className="my-2 h-px w-full bg-foreground/20" />
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Select Dataset</CardTitle>
-          <CardDescription>
-            Select a dataset to continue training your classification model.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            <Select>
-              <SelectTrigger className="">
-                <SelectValue placeholder="Select dataset" />
-              </SelectTrigger>
-              <SelectContent>
-                {files.map((file) => (
-                  <SelectItem key={file.name} value={file.path}>
-                    {file.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Samples: 150</span>
-              <span className="text-sm font-medium">Features: 4</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Classes: 3</span>
-              <span className="text-sm font-medium">
-                Last Updated: 2023-04-15
-              </span>
-            </div>
-          </div>
-        </CardContent>
-        <CardFooter>
-          <Button>Start Training</Button>
-        </CardFooter>
-      </Card>
+      <DatasetSelector files={files} />
     </div>
   );
 }
