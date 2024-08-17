@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -30,6 +30,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import Link from "next/link";
 
 interface File {
   name: string;
@@ -118,7 +119,7 @@ export default function DatasetSelector({ files }: { files: File[] }) {
                 Columns
               </p>
               {/* @ts-ignore */}
-              <p>{selectedFile.columns.join(", ")}</p>
+              <p className="">{selectedFile.columns.join(", ")}</p>
             </div>
             <div className="flex items-center justify-between">
               <div className="space-y-1">
@@ -136,15 +137,18 @@ export default function DatasetSelector({ files }: { files: File[] }) {
             </div>
           </CardContent>
           <CardFooter className="border-t pt-4">
-            <Button className="w-full gap-2">
+            <Link
+              href={`/train/${selectedFile.name}`}
+              className={buttonVariants({ className: "w-full gap-2" })}
+            >
               Train model
               <MoveRight />
-            </Button>
+            </Link>
           </CardFooter>
         </Card>
       )}
       {data && (
-        <Card className="mt-4">
+        <Card className="mt-4 overflow-auto">
           <CardHeader>
             <CardTitle className="text-lg">Dataset preview</CardTitle>
             <CardDescription>

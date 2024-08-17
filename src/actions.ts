@@ -41,7 +41,7 @@ export async function readFiles() {
         path: path.join(csvDir, fileName),
         samples: data.length - 1,
         // @ts-ignore
-        columnsNum: data[0].length - 1,
+        columnsNum: data[0].length,
         columns: data[0],
       };
     }),

@@ -1,5 +1,5 @@
 import { readFiles } from "@/actions";
-import DatasetSelector from "./components/DatasetSelector";
+import DatasetSelector from "./_components/DatasetSelector";
 
 export default async function Page() {
   const files = await readFiles();

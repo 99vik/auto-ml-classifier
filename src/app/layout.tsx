@@ -22,7 +22,9 @@ export default function RootLayout({
         <Providers>
           <div className="flex min-h-screen">
             <SideNav />
-            <main className="flex-1 bg-secondary px-20 py-10">{children}</main>
+            <main className="w-5/6 flex-1 bg-secondary px-20 py-10">
+              {children}
+            </main>
           </div>
         </Providers>
       </body>
