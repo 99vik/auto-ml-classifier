@@ -22,6 +22,17 @@ export async function getCsvFileData(filePath: string) {
   return await fs.readFile(filePath, "utf8");
 }
 
+export async function getDataByFileName(fileName: string) {
+  const filePath = path.join(process.cwd(), "public", "csv", fileName + ".csv");
+  const fileData = await fs.readFile(filePath, "utf8");
+  // console.log(fileData);
+  const { data } = Papa.parse(fileData);
+  return { fileData: fileData, columns: data[0] } as {
+    fileData: string;
+    columns: string[];
+  };
+}
+
 export async function readFiles() {
   const csvDir = path.join(process.cwd(), "public", "csv");
   const fileNames = await fs.readdir(csvDir);

@@ -1,6 +1,13 @@
-"use client";
+import { getDataByFileName } from "@/actions";
+import ModelConfigurator from "./ModelConfigurator";
 
-export default function Page({ params }: { params: { fileName: string } }) {
+export default async function Page({
+  params,
+}: {
+  params: { fileName: string };
+}) {
   const { fileName } = params;
-  return <div>{fileName}</div>;
+  const { fileData, columns } = await getDataByFileName(fileName);
+  // console.log(columns);
+  return <ModelConfigurator fileData={fileData} columns={columns} />;
 }

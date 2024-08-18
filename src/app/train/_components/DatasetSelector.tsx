@@ -141,7 +141,7 @@ export default function DatasetSelector({ files }: { files: File[] }) {
               href={`/train/${selectedFile.name}`}
               className={buttonVariants({ className: "w-full gap-2" })}
             >
-              Train model
+              Continue
               <MoveRight />
             </Link>
           </CardFooter>
