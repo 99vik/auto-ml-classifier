@@ -27,7 +27,7 @@ export default function Page() {
   });
 
   return (
-    <div className="h-full">
+    <div className="min-h-full space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-semibold">Datasets</h1>
         <div className="flex items-center gap-2">
@@ -67,7 +67,6 @@ export default function Page() {
           </DropdownMenu>
         </div>
       </div>
-      <div className="my-2 h-px w-full bg-foreground/20" />
       {files === undefined ? (
         <div className="h-[500px] animate-pulse overflow-hidden rounded-xl border bg-background"></div>
       ) : (
