@@ -28,6 +28,23 @@ export default function ModelConfigurator({
   columns: string[];
 }) {
   const [selectedColumn, setSelectedColumn] = useState<null | string>(null);
+
+  async function trainModel() {
+    const csvBlob = new Blob([fileData], { type: "text/csv" });
+    const csvFile = new File([csvBlob], "data.csv", { type: "text/csv" });
+    const formData = new FormData();
+
+    formData.append("file", csvFile);
+    formData.append("label_index", columns.indexOf(selectedColumn!).toString());
+    const response = await fetch("http://127.0.0.1:5000/api/test", {
+      method: "POST",
+      body: formData,
+    });
+    console.log(response);
+    const body = await response.json();
+    console.log(body);
+  }
+
   return (
     <>
       <Card>
@@ -124,7 +141,11 @@ export default function ModelConfigurator({
           </div>
         </CardContent>
         <CardFooter className="border-t pt-4">
-          <Button disabled={selectedColumn === null} className="w-full">
+          <Button
+            onClick={trainModel}
+            disabled={selectedColumn === null}
+            className="w-full"
+          >
             Train model
           </Button>
         </CardFooter>
