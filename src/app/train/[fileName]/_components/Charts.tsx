@@ -3,6 +3,8 @@ import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
 import {
   ChartConfig,
   ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
@@ -16,30 +18,30 @@ import {
 } from "@/components/ui/card";
 
 const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
+  { iteration: "10", testData: 186, trainData: 80 },
+  { iteration: "20", testData: 305, trainData: 200 },
+  { iteration: "30", testData: 237, trainData: 120 },
+  { iteration: "40", testData: 73, trainData: 190 },
+  { iteration: "50", testData: 209, trainData: 130 },
+  { iteration: "60", testData: 214, trainData: 140 },
 ];
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
+  testData: {
+    label: "Test set loss",
     color: "hsl(var(--chart-1))",
   },
-  mobile: {
-    label: "Mobile",
+  trainData: {
+    label: "Train set loss",
     color: "hsl(var(--chart-2))",
   },
-};
+} satisfies ChartConfig;
 
 export default function Charts() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Line Chart - Multiple</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Model loss</CardTitle>
+        <CardDescription>Model loss over time</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -51,26 +53,33 @@ export default function Charts() {
               right: 12,
             }}
           >
+            <ChartLegend content={<ChartLegendContent />} />
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="month"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              tickFormatter={(value) => value.slice(0, 3)}
+              dataKey="iteration"
+              tickMargin={4}
+              label={{
+                value: "Iteration",
+                position: "insideBottom",
+                offset: -2,
+              }}
             />
-            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+            <ChartTooltip
+              content={
+                <ChartTooltipContent labelFormatter={(v) => "Iteration " + v} />
+              }
+            />
             <Line
-              dataKey="desktop"
+              dataKey="trainData"
               type="monotone"
-              stroke="var(--color-desktop)"
+              stroke="var(--color-trainData)"
               strokeWidth={2}
               dot={false}
             />
             <Line
-              dataKey="mobile"
+              dataKey="testData"
               type="monotone"
-              stroke="var(--color-mobile)"
+              stroke="var(--color-testData)"
               strokeWidth={2}
               dot={false}
             />
@@ -78,16 +87,7 @@ export default function Charts() {
         </ChartContainer>
       </CardContent>
       <CardFooter>
-        <div className="flex w-full items-start gap-2 text-sm">
-          <div className="grid gap-2">
-            <div className="flex items-center gap-2 font-medium leading-none">
-              Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-            </div>
-            <div className="flex items-center gap-2 leading-none text-muted-foreground">
-              Showing total visitors for the last 6 months
-            </div>
-          </div>
-        </div>
+        <div className="flex w-full items-start gap-2 text-sm">asd</div>
       </CardFooter>
     </Card>
   );
