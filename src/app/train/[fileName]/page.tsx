@@ -1,5 +1,5 @@
 import { getDataByFileName } from "@/actions";
-import ModelConfigurator from "./ModelConfigurator";
+import ModelConfigurator from "./_components/ModelConfigurator";
 
 export default async function Page({
   params,

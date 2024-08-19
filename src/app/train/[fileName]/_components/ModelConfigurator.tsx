@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/select";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import Charts from "./Charts";
 
 export default function ModelConfigurator({
   fileData,
@@ -28,6 +29,7 @@ export default function ModelConfigurator({
   columns: string[];
 }) {
   const [selectedColumn, setSelectedColumn] = useState<null | string>(null);
+  const [status, setStatus] = useState<string>("");
 
   async function trainModel() {
     const csvBlob = new Blob([fileData], { type: "text/csv" });
@@ -42,17 +44,20 @@ export default function ModelConfigurator({
     );
 
     eventSource.onmessage = (event) => {
-      console.log(event.data);
-      if (event.data === "Training complete") {
+      const data = JSON.parse(event.data);
+      console.log(data);
+      if (data.status === "complete") {
         eventSource.close();
       }
     };
 
-    const response = await fetch("http://127.0.0.1:5000/api/train_model", {
+    await fetch("http://127.0.0.1:5000/api/train_model", {
       method: "POST",
       body: formData,
     });
-    console.log(response);
+    // const body = await response.json();
+    // console.log(body);
+    // setStatus(body.status);
   }
 
   return (
@@ -160,6 +165,7 @@ export default function ModelConfigurator({
           </Button>
         </CardFooter>
       </Card>
+      <Charts />
     </>
   );
 }
