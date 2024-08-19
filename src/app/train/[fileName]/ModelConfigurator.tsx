@@ -36,13 +36,23 @@ export default function ModelConfigurator({
 
     formData.append("file", csvFile);
     formData.append("label_index", columns.indexOf(selectedColumn!).toString());
-    const response = await fetch("http://127.0.0.1:5000/api/test", {
+
+    const eventSource = new EventSource(
+      `http://127.0.0.1:5000/api/train_progress`,
+    );
+
+    eventSource.onmessage = (event) => {
+      console.log(event.data);
+      if (event.data === "Training complete") {
+        eventSource.close();
+      }
+    };
+
+    const response = await fetch("http://127.0.0.1:5000/api/train_model", {
       method: "POST",
       body: formData,
     });
     console.log(response);
-    const body = await response.json();
-    console.log(body);
   }
 
   return (
