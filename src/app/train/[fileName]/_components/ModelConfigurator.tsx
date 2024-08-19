@@ -21,6 +21,15 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Charts from "./Charts";
 
+export interface TrainingDataType {
+  status: "training" | "preparing" | "complete";
+  iteration: number;
+  trainLoss: number;
+  trainAccuracy: number;
+  testLoss: number;
+  testAccuracy: number;
+}
+
 export default function ModelConfigurator({
   fileData,
   columns,
@@ -30,8 +39,10 @@ export default function ModelConfigurator({
 }) {
   const [selectedColumn, setSelectedColumn] = useState<null | string>(null);
   const [status, setStatus] = useState<string>("");
+  const [trainingData, setTrainingData] = useState<[] | TrainingDataType[]>([]);
 
   async function trainModel() {
+    setTrainingData([]);
     const csvBlob = new Blob([fileData], { type: "text/csv" });
     const csvFile = new File([csvBlob], "data.csv", { type: "text/csv" });
     const formData = new FormData();
@@ -44,20 +55,22 @@ export default function ModelConfigurator({
     );
 
     eventSource.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      console.log(data);
+      const data = JSON.parse(event.data) as TrainingDataType;
       if (data.status === "complete") {
         eventSource.close();
+        return;
       }
+      if (data.status === "preparing") {
+        return;
+      }
+      setTrainingData((prevData) => [...prevData, data]);
+      console.log(data);
     };
 
     await fetch("http://127.0.0.1:5000/api/train_model", {
       method: "POST",
       body: formData,
     });
-    // const body = await response.json();
-    // console.log(body);
-    // setStatus(body.status);
   }
 
   return (
@@ -165,7 +178,7 @@ export default function ModelConfigurator({
           </Button>
         </CardFooter>
       </Card>
-      <Charts />
+      <Charts data={trainingData} />
     </>
   );
 }

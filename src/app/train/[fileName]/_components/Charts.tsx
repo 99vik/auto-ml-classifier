@@ -1,4 +1,3 @@
-import { TrendingUp } from "lucide-react";
 import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
 import {
   ChartConfig,
@@ -16,27 +15,28 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
+import { TrainingDataType } from "./ModelConfigurator";
 
 const chartData = [
-  { iteration: "10", testData: 186, trainData: 80 },
-  { iteration: "20", testData: 305, trainData: 200 },
-  { iteration: "30", testData: 237, trainData: 120 },
-  { iteration: "40", testData: 73, trainData: 190 },
-  { iteration: "50", testData: 209, trainData: 130 },
-  { iteration: "60", testData: 214, trainData: 140 },
+  { iteration: "10", testLoss: 186, trainLoss: 80 },
+  { iteration: "20", testLoss: 305, trainLoss: 200 },
+  //   { iteration: "30", testLoss: 237, trainLoss: 120 },
+  //   { iteration: "40", testLoss: 73, trainLoss: 190 },
+  //   { iteration: "50", testLoss: 209, trainLoss: 130 },
+  //   { iteration: "60", testLoss: 214, trainLoss: 140 },
 ];
 const chartConfig = {
-  testData: {
+  testLoss: {
     label: "Test set loss",
     color: "hsl(var(--chart-1))",
   },
-  trainData: {
+  trainLoss: {
     label: "Train set loss",
     color: "hsl(var(--chart-2))",
   },
 } satisfies ChartConfig;
 
-export default function Charts() {
+export default function Charts({ data }: { data: TrainingDataType[] }) {
   return (
     <Card>
       <CardHeader>
@@ -47,7 +47,7 @@ export default function Charts() {
         <ChartContainer config={chartConfig}>
           <LineChart
             accessibilityLayer
-            data={chartData}
+            data={data}
             margin={{
               left: 12,
               right: 12,
@@ -70,16 +70,16 @@ export default function Charts() {
               }
             />
             <Line
-              dataKey="trainData"
+              dataKey="trainLoss"
               type="monotone"
-              stroke="var(--color-trainData)"
+              stroke="var(--color-trainLoss)"
               strokeWidth={2}
               dot={false}
             />
             <Line
-              dataKey="testData"
+              dataKey="testLoss"
               type="monotone"
-              stroke="var(--color-testData)"
+              stroke="var(--color-testLoss)"
               strokeWidth={2}
               dot={false}
             />
