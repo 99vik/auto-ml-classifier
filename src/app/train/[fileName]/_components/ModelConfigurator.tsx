@@ -21,6 +21,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Charts from "./Charts";
 import NeuralNetworkArchitecture from "./NeuralNetworkArchitecture";
+import { Minus, Plus } from "lucide-react";
 
 export interface TrainingDataType {
   status: "training" | "preparing" | "complete";
@@ -229,9 +230,12 @@ export default function ModelConfigurator({
         </CardContent>
         <CardContent className="border-t pt-4">
           <p className="text-center font-medium">Neural network architecture</p>
-          <div className="flex items-center justify-center gap-2">
+          <div className="mt-2 flex items-center justify-center gap-2 text-sm">
             <Button
-              variant="ghost"
+              disabled={modelConfiguration.hiddenLayers.length === 0}
+              variant="outline"
+              size="sm"
+              className="aspect-square rounded-full px-2"
               onClick={() =>
                 setModelConfiguration((prevConfig) => ({
                   ...prevConfig,
@@ -239,25 +243,34 @@ export default function ModelConfigurator({
                 }))
               }
             >
-              -
+              <Minus size={14} strokeWidth={2} />
+            </Button>
+            <Button
+              disabled={modelConfiguration.hiddenLayers.length === 5}
+              variant="outline"
+              size="sm"
+              className="aspect-square rounded-full px-2"
+              onClick={() =>
+                setModelConfiguration((prevConfig) => ({
+                  ...prevConfig,
+                  hiddenLayers: [...prevConfig.hiddenLayers, 4],
+                }))
+              }
+            >
+              <Plus size={14} strokeWidth={2} />
             </Button>
             <p className="text-center">
               {modelConfiguration.hiddenLayers.length} Hidden layers
             </p>
-            <Button
-              variant="ghost"
-              onClick={() =>
-                setModelConfiguration((prevConfig) => ({
-                  ...prevConfig,
-                  hiddenLayers: [...prevConfig.hiddenLayers, 2],
-                }))
-              }
-            >
-              +
-            </Button>
           </div>
           <NeuralNetworkArchitecture
             hiddenLayers={modelConfiguration.hiddenLayers}
+            setHiddenLayers={(hiddenLayers) =>
+              setModelConfiguration((prevConfig) => ({
+                ...prevConfig,
+                hiddenLayers,
+              }))
+            }
           />
         </CardContent>
         <CardFooter className="border-t pt-4">

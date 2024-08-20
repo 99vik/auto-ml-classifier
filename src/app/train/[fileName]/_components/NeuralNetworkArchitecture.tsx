@@ -1,12 +1,15 @@
 "use client";
 
-import { skip } from "node:test";
+import { Button } from "@/components/ui/button";
+import { Minus, Plus } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 export default function NeuralNetworkArchitecture({
   hiddenLayers,
+  setHiddenLayers,
 }: {
   hiddenLayers: number[];
+  setHiddenLayers: (hiddenLayers: number[]) => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [positions, setPositions] = useState<any[]>([]);
@@ -67,12 +70,42 @@ export default function NeuralNetworkArchitecture({
 
   return (
     <>
-      <div className="flex items-center justify-evenly">
+      <div className="mt-5 flex items-center justify-evenly">
         <p className="whitespace-nowrap text-sm text-muted-foreground">
           Input layer
         </p>
         {hiddenLayers.map((neurons, layerIndex) => (
-          <div key={layerIndex}>a</div>
+          <div key={layerIndex} className="flex flex-col items-center gap-1">
+            <div className="flex items-center justify-center gap-1">
+              <Button
+                disabled={hiddenLayers[layerIndex] === 1}
+                variant="outline"
+                size="sm"
+                className="aspect-square h-fit rounded-full px-1.5"
+                onClick={() => {
+                  const newHiddenLayers = [...hiddenLayers];
+                  newHiddenLayers[layerIndex]--;
+                  setHiddenLayers(newHiddenLayers);
+                }}
+              >
+                <Minus size={14} strokeWidth={2} />
+              </Button>
+              <Button
+                disabled={hiddenLayers[layerIndex] === 10}
+                onClick={() => {
+                  const newHiddenLayers = [...hiddenLayers];
+                  newHiddenLayers[layerIndex]++;
+                  setHiddenLayers(newHiddenLayers);
+                }}
+                variant="outline"
+                size="sm"
+                className="aspect-square h-fit rounded-full px-1.5"
+              >
+                <Plus size={14} strokeWidth={2} />
+              </Button>
+            </div>
+            <p className="whitespace-nowrap text-sm">{neurons} neurons</p>
+          </div>
         ))}
         <p className="whitespace-nowrap text-sm text-muted-foreground">
           Output layer
