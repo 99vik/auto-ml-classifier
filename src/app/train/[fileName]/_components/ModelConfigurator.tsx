@@ -36,6 +36,7 @@ interface ModelConfiguration {
   batchSize: number;
   learningRate: number;
   activationFunction: "relu" | "tanh" | "sigmoid" | "linear";
+  hiddenLayers: number[];
 }
 
 export default function ModelConfigurator({
@@ -54,6 +55,7 @@ export default function ModelConfigurator({
       batchSize: 32,
       learningRate: 0.01,
       activationFunction: "tanh",
+      hiddenLayers: [4],
     });
 
   async function trainModel() {
@@ -65,7 +67,6 @@ export default function ModelConfigurator({
     formData.append("file", csvFile);
     formData.append("label_index", columns.indexOf(selectedColumn!).toString());
     formData.append("iterations", modelConfiguration.iterations.toString());
-    // formData.append("batch_size", modelConfiguration.batchSize.toString());
     formData.append(
       "learning_rate",
       modelConfiguration.learningRate.toString(),
@@ -228,7 +229,36 @@ export default function ModelConfigurator({
         </CardContent>
         <CardContent className="border-t pt-4">
           <p className="text-center font-medium">Neural network architecture</p>
-          <NeuralNetworkArchitecture />
+          <div className="flex items-center justify-center gap-2">
+            <Button
+              variant="ghost"
+              onClick={() =>
+                setModelConfiguration((prevConfig) => ({
+                  ...prevConfig,
+                  hiddenLayers: prevConfig.hiddenLayers.slice(0, -1),
+                }))
+              }
+            >
+              -
+            </Button>
+            <p className="text-center">
+              {modelConfiguration.hiddenLayers.length} Hidden layers
+            </p>
+            <Button
+              variant="ghost"
+              onClick={() =>
+                setModelConfiguration((prevConfig) => ({
+                  ...prevConfig,
+                  hiddenLayers: [...prevConfig.hiddenLayers, 2],
+                }))
+              }
+            >
+              +
+            </Button>
+          </div>
+          <NeuralNetworkArchitecture
+            hiddenLayers={modelConfiguration.hiddenLayers}
+          />
         </CardContent>
         <CardFooter className="border-t pt-4">
           <Button
