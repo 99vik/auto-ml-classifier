@@ -8,6 +8,6 @@ export default async function Page({
 }) {
   const { fileName } = params;
   const { fileData, columns } = await getDataByFileName(fileName);
-  // console.log(columns);
+
   return <ModelConfigurator fileData={fileData} columns={columns} />;
 }

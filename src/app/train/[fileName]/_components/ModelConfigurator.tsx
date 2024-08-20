@@ -20,14 +20,22 @@ import {
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Charts from "./Charts";
+import NeuralNetworkArchitecture from "./NeuralNetworkArchitecture";
 
 export interface TrainingDataType {
   status: "training" | "preparing" | "complete";
-  iteration: number;
+  iteration: string;
   trainLoss: number;
   trainAccuracy: number;
   testLoss: number;
   testAccuracy: number;
+}
+
+interface ModelConfiguration {
+  iterations: number;
+  batchSize: number;
+  learningRate: number;
+  activationFunction: "relu" | "tanh" | "sigmoid" | "linear";
 }
 
 export default function ModelConfigurator({
@@ -40,6 +48,13 @@ export default function ModelConfigurator({
   const [selectedColumn, setSelectedColumn] = useState<null | string>(null);
   const [status, setStatus] = useState<string>("");
   const [trainingData, setTrainingData] = useState<[] | TrainingDataType[]>([]);
+  const [modelConfiguration, setModelConfiguration] =
+    useState<ModelConfiguration>({
+      iterations: 100,
+      batchSize: 32,
+      learningRate: 0.01,
+      activationFunction: "tanh",
+    });
 
   async function trainModel() {
     setTrainingData([]);
@@ -49,6 +64,16 @@ export default function ModelConfigurator({
 
     formData.append("file", csvFile);
     formData.append("label_index", columns.indexOf(selectedColumn!).toString());
+    formData.append("iterations", modelConfiguration.iterations.toString());
+    // formData.append("batch_size", modelConfiguration.batchSize.toString());
+    formData.append(
+      "learning_rate",
+      modelConfiguration.learningRate.toString(),
+    );
+    formData.append(
+      "activation_function",
+      modelConfiguration.activationFunction,
+    );
 
     const eventSource = new EventSource(
       `http://127.0.0.1:5000/api/train_progress`,
@@ -64,7 +89,6 @@ export default function ModelConfigurator({
         return;
       }
       setTrainingData((prevData) => [...prevData, data]);
-      console.log(data);
     };
 
     await fetch("http://127.0.0.1:5000/api/train_model", {
@@ -110,15 +134,21 @@ export default function ModelConfigurator({
           <div className="grid gap-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-1">
-                <label htmlFor="epochs" className="text-sm font-medium">
-                  Epochs
+                <label htmlFor="iteration" className="text-sm font-medium">
+                  Iterations
                 </label>
                 <Input
-                  id="epochs"
+                  onChange={(e) =>
+                    setModelConfiguration({
+                      ...modelConfiguration,
+                      iterations: parseInt(e.target.value),
+                    })
+                  }
+                  id="iteration"
                   type="number"
                   defaultValue={100}
                   min={1}
-                  max={1000}
+                  max={5000}
                   className="w-full"
                 />
               </div>
@@ -141,32 +171,64 @@ export default function ModelConfigurator({
                 <label htmlFor="learning-rate" className="text-sm font-medium">
                   Learning Rate
                 </label>
-                <Input
-                  id="learning-rate"
-                  type="number"
-                  defaultValue={0.001}
-                  step={0.0001}
-                  min={0.0001}
-                  max={0.1}
-                  className="w-full"
-                />
+                <Select
+                  defaultValue="0.01"
+                  onValueChange={(e) =>
+                    setModelConfiguration({
+                      ...modelConfiguration,
+                      learningRate: parseFloat(e),
+                    })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue id="learning-rate" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="0.0001">0.0001</SelectItem>
+                    <SelectItem value="0.001">0.001</SelectItem>
+                    <SelectItem value="0.01">0.01</SelectItem>
+                    <SelectItem value="0.1">0.1</SelectItem>
+                    <SelectItem value="1">1</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div className="grid gap-1">
-                <label htmlFor="momentum" className="text-sm font-medium">
-                  Momentum
+                <label
+                  htmlFor="activation-function"
+                  className="text-sm font-medium"
+                >
+                  Activation function
                 </label>
-                <Input
-                  id="momentum"
-                  type="number"
-                  defaultValue={0.9}
-                  step={0.1}
-                  min={0}
-                  max={1}
-                  className="w-full"
-                />
+                <Select
+                  defaultValue="tanh"
+                  onValueChange={(e) =>
+                    setModelConfiguration({
+                      ...modelConfiguration,
+                      activationFunction: e as
+                        | "relu"
+                        | "tanh"
+                        | "sigmoid"
+                        | "linear",
+                    })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue id="learning-rate" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="relu">ReLU</SelectItem>
+                    <SelectItem value="tanh">Tanh</SelectItem>
+                    <SelectItem value="sigmoid">Sigmoid</SelectItem>
+                    <SelectItem value="linear">Linear</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </div>
+        </CardContent>
+        <CardContent className="border-t pt-4">
+          <p className="text-center font-medium">Neural network architecture</p>
+          <NeuralNetworkArchitecture />
         </CardContent>
         <CardFooter className="border-t pt-4">
           <Button
