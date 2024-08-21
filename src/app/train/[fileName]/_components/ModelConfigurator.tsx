@@ -23,9 +23,10 @@ import { Button } from "@/components/ui/button";
 import Charts from "./Charts";
 import NeuralNetworkArchitecture from "./NeuralNetworkArchitecture";
 import { Minus, Plus } from "lucide-react";
+import TrainingResults from "./TrainingResults";
 
 export interface TrainingDataType {
-  status: "training" | "preparing" | "complete";
+  status: "training" | "preparing" | "complete" | "";
   iteration: string;
   trainLoss: number;
   trainAccuracy: number;
@@ -61,7 +62,8 @@ export default function ModelConfigurator({
       hiddenLayers: [4],
     });
 
-  async function trainModel() {
+  function trainModel() {
+    setStatus("preparing");
     setTrainingData([]);
     const csvBlob = new Blob([fileData], { type: "text/csv" });
     const csvFile = new File([csvBlob], "data.csv", { type: "text/csv" });
@@ -78,6 +80,7 @@ export default function ModelConfigurator({
       "activation_function",
       modelConfiguration.activationFunction,
     );
+    formData.append("hidden_layers", modelConfiguration.hiddenLayers.join(","));
 
     const eventSource = new EventSource(
       `http://127.0.0.1:5000/api/train_progress`,
@@ -86,16 +89,18 @@ export default function ModelConfigurator({
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data) as TrainingDataType;
       if (data.status === "complete") {
+        setStatus("complete");
         eventSource.close();
         return;
       }
       if (data.status === "preparing") {
         return;
       }
+      setStatus("training");
       setTrainingData((prevData) => [...prevData, data]);
     };
 
-    await fetch("http://127.0.0.1:5000/api/train_model", {
+    fetch("http://127.0.0.1:5000/api/train_model", {
       method: "POST",
       body: formData,
     });
@@ -298,13 +303,14 @@ export default function ModelConfigurator({
             <CardFooter className="border-t pt-4">
               <Button
                 onClick={trainModel}
-                disabled={selectedColumn === null}
+                disabled={selectedColumn === null || status === "training"}
                 className="w-full"
               >
-                Train model
+                {status === "training" ? "Training..." : "Train model"}
               </Button>
             </CardFooter>
           </Card>
+          <TrainingResults data={trainingData} />
           <Charts data={trainingData} />
         </>
       )}
