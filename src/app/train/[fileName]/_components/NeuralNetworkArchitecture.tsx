@@ -7,9 +7,13 @@ import { useEffect, useRef, useState } from "react";
 export default function NeuralNetworkArchitecture({
   hiddenLayers,
   setHiddenLayers,
+  numberOfInputs,
+  numberOfOutputs,
 }: {
   hiddenLayers: number[];
   setHiddenLayers: (hiddenLayers: number[]) => void;
+  numberOfInputs: number;
+  numberOfOutputs: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [positions, setPositions] = useState<any[]>([]);
@@ -36,7 +40,7 @@ export default function NeuralNetworkArchitecture({
     }
     setAllPositions();
     window.addEventListener("resize", setAllPositions);
-  }, [hiddenLayers]);
+  }, [hiddenLayers, numberOfOutputs]);
 
   function drawLines() {
     const lines = positions.map((layer, layerIndex) => {
@@ -115,12 +119,16 @@ export default function NeuralNetworkArchitecture({
         <svg className="absolute h-full w-full">
           {positions.length > 0 && drawLines()}
         </svg>
-        <div className="flex flex-col justify-evenly gap-10">
-          <div className="z-10 size-10 rounded-full bg-primary" />
-          <div className="z-10 size-10 rounded-full bg-primary" />
+        <div className="flex flex-col justify-evenly gap-6">
+          {[...Array(numberOfInputs)].map((_, neuronIndex) => (
+            <div
+              key={`inputLayer-${neuronIndex}`}
+              className="z-10 size-10 rounded-full bg-primary"
+            />
+          ))}
         </div>
         {hiddenLayers.map((neurons, layerIndex) => (
-          <div key={layerIndex} className="flex flex-col justify-evenly gap-10">
+          <div key={layerIndex} className="flex flex-col justify-evenly gap-6">
             {[...Array(neurons)].map((_, neuronIndex) => (
               <div
                 key={`${layerIndex}-${neuronIndex}`}
@@ -129,8 +137,13 @@ export default function NeuralNetworkArchitecture({
             ))}
           </div>
         ))}
-        <div className="flex flex-col justify-evenly gap-10">
-          <div className="z-10 size-10 rounded-full bg-primary" />
+        <div className="flex flex-col justify-evenly gap-6">
+          {[...Array(numberOfOutputs)].map((_, neuronIndex) => (
+            <div
+              key={`outputLayer-${neuronIndex}`}
+              className="z-10 size-10 rounded-full bg-primary"
+            />
+          ))}{" "}
         </div>
       </div>
     </>

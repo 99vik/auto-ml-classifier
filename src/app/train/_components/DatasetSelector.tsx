@@ -110,7 +110,7 @@ export default function DatasetSelector({ files }: { files: File[] }) {
             </div>
             <div className="space-y-1">
               <p className="text-sm font-medium text-muted-foreground">
-                Number of columns
+                Number of features
               </p>
               <p>{selectedFile.columnsNum}</p>
             </div>
