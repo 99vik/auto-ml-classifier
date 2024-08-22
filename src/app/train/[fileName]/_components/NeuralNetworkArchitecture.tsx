@@ -38,8 +38,12 @@ export default function NeuralNetworkArchitecture({
       });
       setPositions(allPositions);
     }
+
     setAllPositions();
-    window.addEventListener("resize", setAllPositions);
+    const resizeObeserver = new ResizeObserver(setAllPositions);
+    resizeObeserver.observe(ref.current?.parentNode as HTMLElement);
+
+    return () => resizeObeserver.disconnect();
   }, [hiddenLayers, numberOfOutputs]);
 
   function drawLines() {
