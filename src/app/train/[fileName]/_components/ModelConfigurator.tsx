@@ -374,7 +374,7 @@ export default function ModelConfigurator({
             trainingTime={trainingTime}
             data={trainingData}
           />
-          <Charts data={trainingData} />
+          <Charts labels={Array.from(uniqueOutputs)} data={trainingData} />
         </>
       )}
     </>
