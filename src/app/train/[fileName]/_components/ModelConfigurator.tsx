@@ -30,6 +30,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Progress } from "@/components/ui/progress";
 
 export interface TrainingDataType {
   status: "training" | "preparing" | "complete" | "";
@@ -38,6 +39,8 @@ export interface TrainingDataType {
   trainAccuracy: number;
   testLoss: number;
   testAccuracy: number;
+  f1Score: number;
+  confusionMatrix: number[][];
 }
 
 interface ModelConfiguration {
@@ -59,6 +62,7 @@ export default function ModelConfigurator({
   const [uniqueOutputs, setUniqueOutputs] = useState<any>(null);
   const [status, setStatus] = useState<string>("");
   const [trainingData, setTrainingData] = useState<[] | TrainingDataType[]>([]);
+  const [trainingTime, setTrainingTime] = useState<number>(0);
   const [modelConfiguration, setModelConfiguration] =
     useState<ModelConfiguration>({
       iterations: 100,
@@ -71,6 +75,11 @@ export default function ModelConfigurator({
   function trainModel() {
     setStatus("preparing");
     setTrainingData([]);
+    setTrainingTime(0);
+
+    const startTime = Date.now();
+    let timerInterval: NodeJS.Timeout;
+
     const csvBlob = new Blob([fileData], { type: "text/csv" });
     const csvFile = new File([csvBlob], "data.csv", { type: "text/csv" });
     const formData = new FormData();
@@ -97,6 +106,7 @@ export default function ModelConfigurator({
       if (data.status === "complete") {
         setStatus("complete");
         eventSource.close();
+        clearInterval(timerInterval);
         return;
       }
       if (data.status === "preparing") {
@@ -105,6 +115,11 @@ export default function ModelConfigurator({
       setStatus("training");
       setTrainingData((prevData) => [...prevData, data]);
     };
+
+    timerInterval = setInterval(() => {
+      const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+      setTrainingTime(elapsedTime);
+    }, 1000);
 
     fetch("http://127.0.0.1:5000/api/train_model", {
       method: "POST",
@@ -148,20 +163,6 @@ export default function ModelConfigurator({
             </SelectContent>
           </Select>
           {selectedColumn !== null && (
-            // <div className="mt-4 space-y-0">
-            //   <p className="text-muted-foreground">
-            //     <span className="font-medium text-primary">
-            //       {columns.length - 1} input features (input layer):
-            //     </span>{" "}
-            //     {columns.filter((col) => col !== selectedColumn).join(", ")}
-            //   </p>
-            //   <p className="text-muted-foreground">
-            //     <span className="font-medium text-primary">
-            //       {uniqueOutputs.size} target labels (output layer):
-            //     </span>{" "}
-            //     {Array.from(uniqueOutputs).join(", ")}
-            //   </p>
-            // </div>
             <Accordion type="single" collapsible>
               <AccordionItem
                 className="mt-4 border-b-0 border-t"
@@ -191,31 +192,6 @@ export default function ModelConfigurator({
       </Card>
       {selectedColumn !== null && (
         <>
-          {/* <Card>
-            <CardHeader>
-              <CardTitle>Target label info</CardTitle>
-              <CardDescription>
-                Descriptions of input features and possible unique target
-                labels.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <p className="text-muted-foreground">
-                  <span className="font-medium text-primary">
-                    {columns.length - 1} input features (input layer):
-                  </span>{" "}
-                  {columns.filter((col) => col !== selectedColumn).join(", ")}
-                </p>
-                <p className="text-muted-foreground">
-                  <span className="font-medium text-primary">
-                    {uniqueOutputs.size} target labels (output layer):
-                  </span>{" "}
-                  {Array.from(uniqueOutputs).join(", ")}
-                </p>
-              </div>
-            </CardContent>
-          </Card> */}
           <Card>
             <CardHeader>
               <CardTitle>Model configuration</CardTitle>
@@ -240,7 +216,10 @@ export default function ModelConfigurator({
                       id="iteration"
                       type="number"
                       defaultValue={100}
-                      min={1}
+                      // @ts-ignore
+                      onWheel={(e) => e.target.blur()}
+                      min={10}
+                      step={10}
                       max={5000}
                       className="w-full"
                     />
@@ -381,7 +360,20 @@ export default function ModelConfigurator({
               </Button>
             </CardFooter>
           </Card>
-          <TrainingResults data={trainingData} />
+
+          <TrainingResults
+            progress={
+              status === "complete"
+                ? 100
+                : trainingData.length > 0
+                  ? (Number(trainingData[trainingData.length - 1].iteration) /
+                      modelConfiguration.iterations) *
+                    100
+                  : 0
+            }
+            trainingTime={trainingTime}
+            data={trainingData}
+          />
           <Charts data={trainingData} />
         </>
       )}
