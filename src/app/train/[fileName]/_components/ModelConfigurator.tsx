@@ -24,6 +24,12 @@ import Charts from "./Charts";
 import NeuralNetworkArchitecture from "./NeuralNetworkArchitecture";
 import { Minus, Plus } from "lucide-react";
 import TrainingResults from "./TrainingResults";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 export interface TrainingDataType {
   status: "training" | "preparing" | "complete" | "";
@@ -50,7 +56,7 @@ export default function ModelConfigurator({
   columns: string[];
 }) {
   const [selectedColumn, setSelectedColumn] = useState<null | string>(null);
-  const [numberOfOutputs, setNumberOfOutputs] = useState<number>(0);
+  const [uniqueOutputs, setUniqueOutputs] = useState<any>(null);
   const [status, setStatus] = useState<string>("");
   const [trainingData, setTrainingData] = useState<[] | TrainingDataType[]>([]);
   const [modelConfiguration, setModelConfiguration] =
@@ -122,10 +128,10 @@ export default function ModelConfigurator({
               const { data } = Papa.parse(fileData) as {
                 data: (string | number)[][];
               };
-              const uniqueSpecies = new Set(
+              const uniqueOutputs = new Set(
                 data.slice(1).map((row) => row[columns.indexOf(value)]),
               );
-              setNumberOfOutputs(uniqueSpecies.size);
+              setUniqueOutputs(uniqueOutputs);
             }}
           >
             <SelectTrigger className="">
@@ -141,10 +147,75 @@ export default function ModelConfigurator({
               </SelectGroup>
             </SelectContent>
           </Select>
+          {selectedColumn !== null && (
+            // <div className="mt-4 space-y-0">
+            //   <p className="text-muted-foreground">
+            //     <span className="font-medium text-primary">
+            //       {columns.length - 1} input features (input layer):
+            //     </span>{" "}
+            //     {columns.filter((col) => col !== selectedColumn).join(", ")}
+            //   </p>
+            //   <p className="text-muted-foreground">
+            //     <span className="font-medium text-primary">
+            //       {uniqueOutputs.size} target labels (output layer):
+            //     </span>{" "}
+            //     {Array.from(uniqueOutputs).join(", ")}
+            //   </p>
+            // </div>
+            <Accordion type="single" collapsible>
+              <AccordionItem
+                className="mt-4 border-b-0 border-t"
+                value="item-1"
+              >
+                <AccordionTrigger className="justify-center gap-6 pb-0 pt-3">
+                  Target label information
+                </AccordionTrigger>
+                <AccordionContent className="space-y-1 pb-0 pt-2">
+                  <p className="text-muted-foreground">
+                    <span className="font-medium text-primary">
+                      {columns.length - 1} input features (input layer):
+                    </span>{" "}
+                    {columns.filter((col) => col !== selectedColumn).join(", ")}
+                  </p>
+                  <p className="text-muted-foreground">
+                    <span className="font-medium text-primary">
+                      {uniqueOutputs.size} target labels (output layer):
+                    </span>{" "}
+                    {Array.from(uniqueOutputs).join(", ")}
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          )}
         </CardContent>
       </Card>
       {selectedColumn !== null && (
         <>
+          {/* <Card>
+            <CardHeader>
+              <CardTitle>Target label info</CardTitle>
+              <CardDescription>
+                Descriptions of input features and possible unique target
+                labels.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <p className="text-muted-foreground">
+                  <span className="font-medium text-primary">
+                    {columns.length - 1} input features (input layer):
+                  </span>{" "}
+                  {columns.filter((col) => col !== selectedColumn).join(", ")}
+                </p>
+                <p className="text-muted-foreground">
+                  <span className="font-medium text-primary">
+                    {uniqueOutputs.size} target labels (output layer):
+                  </span>{" "}
+                  {Array.from(uniqueOutputs).join(", ")}
+                </p>
+              </div>
+            </CardContent>
+          </Card> */}
           <Card>
             <CardHeader>
               <CardTitle>Model configuration</CardTitle>
@@ -297,7 +368,7 @@ export default function ModelConfigurator({
                   }))
                 }
                 numberOfInputs={columns.length - 1}
-                numberOfOutputs={numberOfOutputs}
+                numberOfOutputs={uniqueOutputs.size}
               />
             </CardContent>
             <CardFooter className="border-t pt-4">
