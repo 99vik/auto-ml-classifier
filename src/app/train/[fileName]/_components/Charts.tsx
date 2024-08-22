@@ -144,19 +144,20 @@ export default function Charts({
       <Card>
         <CardHeader>
           <CardTitle>Confusion matrix</CardTitle>
-          <CardDescription>Confusion matrix over time</CardDescription>
+          <CardDescription>
+            Compare predicted values with the true values.
+          </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div
-            className={cn(
-              "grid h-full gap-2",
-              `grid-cols-${labels.length + 1}`,
-            )}
-          >
+        <CardContent className="relative space-y-2 pl-40 pr-52 text-sm font-medium">
+          <p className="absolute right-36 top-1/2 -rotate-90 text-xl text-muted-foreground">
+            Predicted
+          </p>
+
+          <div className={cn("grid", `grid-cols-${labels.length + 1}`)}>
             {[""].concat(labels).map((label, index) => (
               <div
                 key={`${label}-${index}`}
-                className="h-full w-full bg-green-400"
+                className="flex h-10 w-full items-center justify-center"
               >
                 {label}
               </div>
@@ -165,71 +166,44 @@ export default function Charts({
           {labels.map((label, labelIndex) => (
             <div
               key={`${labelIndex}-${label}`}
-              className={cn(
-                "grid h-full gap-2",
-                `grid-cols-${labels.length + 1}`,
-              )}
+              className={cn("grid gap-2", `grid-cols-${labels.length + 1}`)}
             >
-              <div className="h-full w-full bg-green-400">{label}</div>
+              <div className="flex w-full items-center justify-end pr-5">
+                {label}
+              </div>
               {data[0]
                 ? data[data.length - 1].confusionMatrix[labelIndex].map(
                     (value, index) => (
-                      <div key={index} className="h-full w-full bg-green-400">
+                      <div
+                        key={index}
+                        className={cn(
+                          "flex h-20 w-full items-center justify-center rounded-lg border",
+                          index === labelIndex ? "bg-green-200" : "bg-red-200",
+                        )}
+                      >
                         {value}
                       </div>
                     ),
                   )
                 : [...Array(labels.length)].map((_, index) => (
-                    <div key={index} className="h-full w-full bg-green-400">
+                    <div
+                      key={index}
+                      className={cn(
+                        "flex h-20 w-full items-center justify-center rounded-lg border",
+                        index === labelIndex ? "bg-green-200" : "bg-red-200",
+                      )}
+                    >
                       -
                     </div>
                   ))}
             </div>
           ))}
-          {/* <div
-            className={cn(
-              "grid h-full gap-2",
-              `grid-cols-${labels.length + 1}`,
-            )}
-          >
-            {[""].concat(labels).map((label, index) => (
-              <div
-                key={`${label}-${index}`}
-                className="h-full w-full bg-green-400"
-              >
-                {label}
-              </div>
-            ))}
-            {labels.map((label, labelIndex) => (
-              <>
-                <div
-                  key={`${labelIndex}-${label}`}
-                  className="h-full w-full bg-green-400"
-                >
-                  {label}
-                </div> */}
-          {/* {data[0]
-                  ? data[data.length - 1].confusionMatrix[labelIndex].map(
-                      (value, confMatIndex) => (
-                        <div
-                          key={`${labelIndex}-${confMatIndex}-${label}`}
-                          className="h-full w-full bg-green-400"
-                        >
-                          {value}
-                        </div>
-                      ),
-                    )
-                  : [...Array(labels.length)].map((_, index) => (
-                      <div
-                        key={`${labelIndex}-${index}-${label}-${"asd"}`}
-                        className="h-full w-full bg-green-400"
-                      >
-                        1
-                      </div>
-                    ))} */}
-          {/* </>
-            ))} */}
-          {/* </div> */}
+          <div className="mt-2 grid grid-cols-4">
+            <div></div>
+            <p className="col-span-3 text-center text-xl text-muted-foreground">
+              Expected
+            </p>
+          </div>
         </CardContent>
       </Card>
     </div>
