@@ -28,26 +28,27 @@ export default function SideNav() {
   return (
     <nav
       className={cn(
-        "relative border-r bg-background px-3 transition-[width] duration-300",
+        "relative transform-gpu border-r bg-background px-3 transition-[width] duration-500",
         isExpanded ? "w-1/6" : "w-[62px]",
       )}
     >
       <div className="sticky top-0 z-10 space-y-6 py-4">
-        <div className="flex items-center justify-between">
-          {isExpanded && (
-            <Link
-              href="/"
-              className="whitespace-nowrap text-lg font-semibold text-primary"
-            >
-              AutoML Classifier
-            </Link>
-          )}
+        <div className="relative flex items-center justify-start">
+          <Link
+            href="/"
+            className={cn(
+              "whitespace-nowrap text-lg font-semibold text-primary transition-opacity",
+              isExpanded ? "opacity-100 delay-300" : "opacity-0",
+            )}
+          >
+            AutoML Classifier
+          </Link>
 
           <Button
             onClick={() => setIsExpanded((prev) => !prev)}
             size="sm"
             variant="ghost"
-            className="p-2"
+            className="absolute right-0 p-2"
           >
             {isExpanded ? (
               <ArrowLeftToLine size={22} strokeWidth={1.5} />
@@ -69,7 +70,13 @@ export default function SideNav() {
                 <div>
                   <link.icon size={20} />
                 </div>
-                {isExpanded && link.label}
+                <span
+                  className={cn(
+                    isExpanded ? "opacity-100 delay-300" : "opacity-0",
+                  )}
+                >
+                  {link.label}
+                </span>
               </Link>
             </li>
           ))}

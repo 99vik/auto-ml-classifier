@@ -31,7 +31,6 @@ export default function TrainingResults({
   data: TrainingDataType[];
   trainingTime: number;
 }) {
-  console.log(progress);
   return (
     <div className="grid grid-cols-4 gap-6">
       <Card>
