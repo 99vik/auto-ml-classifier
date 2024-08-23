@@ -79,9 +79,10 @@ export default function NeuralNetworkArchitecture({
   return (
     <>
       <div className="mt-5 flex items-center justify-evenly">
-        <p className="whitespace-nowrap text-sm text-muted-foreground">
-          Input layer
-        </p>
+        <div className="whitespace-nowrap text-center text-sm text-muted-foreground">
+          <p>Input layer</p>
+          <p className="text-xs">({numberOfInputs} neurons)</p>
+        </div>
         {hiddenLayers.map((neurons, layerIndex) => (
           <div key={layerIndex} className="flex flex-col items-center gap-1">
             <div className="flex items-center justify-center gap-1">
@@ -115,21 +116,44 @@ export default function NeuralNetworkArchitecture({
             <p className="whitespace-nowrap text-sm">{neurons} neurons</p>
           </div>
         ))}
-        <p className="whitespace-nowrap text-sm text-muted-foreground">
-          Output layer
-        </p>
+        <div className="whitespace-nowrap text-center text-sm text-muted-foreground">
+          <p>Output layer</p>
+          <p className="text-xs">({numberOfOutputs} neurons)</p>
+        </div>
       </div>
       <div ref={ref} className="relative mt-6 flex justify-evenly">
         <svg className="absolute h-full w-full">
           {positions.length > 0 && drawLines()}
         </svg>
         <div className="flex flex-col justify-evenly gap-6">
-          {[...Array(numberOfInputs)].map((_, neuronIndex) => (
-            <div
-              key={`inputLayer-${neuronIndex}`}
-              className="z-10 size-10 rounded-full bg-primary"
-            />
-          ))}
+          {numberOfInputs <= 12
+            ? [...Array(numberOfInputs)].map((_, neuronIndex) => (
+                <div
+                  key={`outputLayer-${neuronIndex}`}
+                  className="z-10 size-10 rounded-full bg-primary"
+                />
+              ))
+            : [...Array(13)].map((_, neuronIndex) => {
+                if (neuronIndex === 6) {
+                  return (
+                    <section
+                      className="flex flex-col items-center justify-center gap-1"
+                      key={`outputLayer-${neuronIndex}`}
+                    >
+                      <div className="size-2 rounded-full bg-muted-foreground" />
+                      <div className="size-2 rounded-full bg-muted-foreground" />
+                      <div className="size-2 rounded-full bg-muted-foreground" />
+                    </section>
+                  );
+                } else {
+                  return (
+                    <div
+                      key={`outputLayer-${neuronIndex}`}
+                      className="z-10 size-10 rounded-full bg-primary"
+                    />
+                  );
+                }
+              })}
         </div>
         {hiddenLayers.map((neurons, layerIndex) => (
           <div key={layerIndex} className="flex flex-col justify-evenly gap-6">
@@ -142,12 +166,34 @@ export default function NeuralNetworkArchitecture({
           </div>
         ))}
         <div className="flex flex-col justify-evenly gap-6">
-          {[...Array(numberOfOutputs)].map((_, neuronIndex) => (
-            <div
-              key={`outputLayer-${neuronIndex}`}
-              className="z-10 size-10 rounded-full bg-primary"
-            />
-          ))}{" "}
+          {numberOfOutputs <= 12
+            ? [...Array(numberOfOutputs)].map((_, neuronIndex) => (
+                <div
+                  key={`outputLayer-${neuronIndex}`}
+                  className="z-10 size-10 rounded-full bg-primary"
+                />
+              ))
+            : [...Array(13)].map((_, neuronIndex) => {
+                if (neuronIndex === 6) {
+                  return (
+                    <section
+                      className="flex flex-col items-center justify-center gap-1"
+                      key={`outputLayer-${neuronIndex}`}
+                    >
+                      <div className="size-2 rounded-full bg-muted-foreground" />
+                      <div className="size-2 rounded-full bg-muted-foreground" />
+                      <div className="size-2 rounded-full bg-muted-foreground" />
+                    </section>
+                  );
+                } else {
+                  return (
+                    <div
+                      key={`outputLayer-${neuronIndex}`}
+                      className="z-10 size-10 rounded-full bg-primary"
+                    />
+                  );
+                }
+              })}
         </div>
       </div>
     </>
