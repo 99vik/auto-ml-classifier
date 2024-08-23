@@ -190,7 +190,7 @@ export default function Charts({
                       key={index}
                       className={cn(
                         "flex h-20 w-full items-center justify-center rounded-lg border",
-                        index === labelIndex ? "bg-green-200" : "bg-red-200",
+                        index === labelIndex ? "bg-green-100" : "bg-red-100",
                       )}
                     >
                       -
@@ -198,7 +198,7 @@ export default function Charts({
                   ))}
             </div>
           ))}
-          <div className="mt-2 grid grid-cols-4">
+          <div className={cn("mt-2 grid", `grid-cols-${labels.length + 1}`)}>
             <div></div>
             <p className="col-span-3 text-center text-xl text-muted-foreground">
               Expected

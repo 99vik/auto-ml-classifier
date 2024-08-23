@@ -48,12 +48,12 @@ export default function SideNav() {
             onClick={() => setIsExpanded((prev) => !prev)}
             size="sm"
             variant="ghost"
-            className="absolute right-0 p-2"
+            className="absolute -right-0 p-2"
           >
             {isExpanded ? (
-              <ArrowLeftToLine size={22} strokeWidth={1.5} />
+              <ArrowLeftToLine size={20} strokeWidth={1.5} />
             ) : (
-              <ArrowRightToLine size={22} strokeWidth={1.5} />
+              <ArrowRightToLine size={20} strokeWidth={1.5} />
             )}
           </Button>
         </div>
