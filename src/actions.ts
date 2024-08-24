@@ -18,6 +18,17 @@ export default async function uploadCsv({
   revalidatePath("/train");
 }
 
+export async function saveModel(model: string, label: string) {
+  const filePath = path.join(
+    process.cwd(),
+    "public",
+    "models",
+    label + ".json",
+  );
+  await fs.writeFile(filePath, model);
+  // revalidatePath("/models");
+}
+
 export async function getCsvFileData(filePath: string) {
   return await fs.readFile(filePath, "utf8");
 }

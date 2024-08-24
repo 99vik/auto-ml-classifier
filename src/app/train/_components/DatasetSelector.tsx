@@ -31,6 +31,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Link from "next/link";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface File {
   name: string;
@@ -119,7 +120,7 @@ export default function DatasetSelector({ files }: { files: File[] }) {
                 Columns
               </p>
               {/* @ts-ignore */}
-              <p className="">{selectedFile.columns.join(", ")}</p>
+              <p className="line-clamp-3">{selectedFile.columns.join(", ")}</p>
             </div>
             <div className="flex items-center justify-between">
               <div className="space-y-1">
@@ -148,14 +149,14 @@ export default function DatasetSelector({ files }: { files: File[] }) {
         </Card>
       )}
       {data && (
-        <Card className="mt-4 overflow-auto">
+        <Card className="mt-4">
           <CardHeader>
             <CardTitle className="text-lg">Dataset preview</CardTitle>
             <CardDescription>
               Showing the first 10 rows of the selected dataset.
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="max-w-[1050px] overflow-auto">
             <Table>
               <TableHeader>
                 <TableRow>

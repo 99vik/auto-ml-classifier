@@ -31,6 +31,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Progress } from "@/components/ui/progress";
+import { saveModel } from "@/actions";
 
 export interface TrainingDataType {
   status: "training" | "preparing" | "complete" | "";
@@ -41,6 +42,7 @@ export interface TrainingDataType {
   testAccuracy: number;
   f1Score: number;
   confusionMatrix: number[][];
+  model: string;
 }
 
 interface ModelConfiguration {
@@ -71,6 +73,7 @@ export default function ModelConfigurator({
       activationFunction: "tanh",
       hiddenLayers: [4],
     });
+  const [model, setModel] = useState<string | null>(null);
 
   function trainModel() {
     setStatus("preparing");
@@ -105,6 +108,8 @@ export default function ModelConfigurator({
       const data = JSON.parse(event.data) as TrainingDataType;
       if (data.status === "complete") {
         setStatus("complete");
+        setModel(data.model);
+        // console.log(JSON.parse(data.model));
         eventSource.close();
         clearInterval(timerInterval);
         return;
@@ -172,13 +177,13 @@ export default function ModelConfigurator({
                   Target label information
                 </AccordionTrigger>
                 <AccordionContent className="space-y-1 pb-0 pt-2">
-                  <p className="text-muted-foreground">
+                  <p className="line-clamp-3 text-muted-foreground">
                     <span className="font-medium text-primary">
                       {columns.length - 1} input features (input layer):
                     </span>{" "}
                     {columns.filter((col) => col !== selectedColumn).join(", ")}
                   </p>
-                  <p className="text-muted-foreground">
+                  <p className="line-clamp-3 text-muted-foreground">
                     <span className="font-medium text-primary">
                       {uniqueOutputs.size} target labels (output layer):
                     </span>{" "}
@@ -375,6 +380,30 @@ export default function ModelConfigurator({
             data={trainingData}
           />
           <Charts labels={Array.from(uniqueOutputs)} data={trainingData} />
+          <Card>
+            <CardHeader>
+              <CardTitle>Model</CardTitle>
+              <CardDescription>
+                The trained model in JSON format.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div>
+                <Button
+                  onClick={() => {
+                    const modelJson = JSON.parse(model!);
+                    const modelData = {
+                      model: modelJson,
+                      label: selectedColumn,
+                    };
+                    saveModel(JSON.stringify(modelData), selectedColumn!);
+                  }}
+                >
+                  Save model
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </>
       )}
     </>

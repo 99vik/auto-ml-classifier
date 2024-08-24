@@ -125,16 +125,16 @@ export default function NeuralNetworkArchitecture({
         <svg className="absolute h-full w-full">
           {positions.length > 0 && drawLines()}
         </svg>
-        <div className="flex flex-col justify-evenly gap-6">
-          {numberOfInputs <= 12
+        <div className="flex flex-col justify-evenly gap-4">
+          {numberOfInputs <= 10
             ? [...Array(numberOfInputs)].map((_, neuronIndex) => (
                 <div
                   key={`outputLayer-${neuronIndex}`}
                   className="z-10 size-10 rounded-full bg-primary"
                 />
               ))
-            : [...Array(13)].map((_, neuronIndex) => {
-                if (neuronIndex === 6) {
+            : [...Array(11)].map((_, neuronIndex) => {
+                if (neuronIndex === 5) {
                   return (
                     <section
                       className="flex flex-col items-center justify-center gap-1"
@@ -156,7 +156,7 @@ export default function NeuralNetworkArchitecture({
               })}
         </div>
         {hiddenLayers.map((neurons, layerIndex) => (
-          <div key={layerIndex} className="flex flex-col justify-evenly gap-6">
+          <div key={layerIndex} className="flex flex-col justify-evenly gap-4">
             {[...Array(neurons)].map((_, neuronIndex) => (
               <div
                 key={`${layerIndex}-${neuronIndex}`}
@@ -165,16 +165,16 @@ export default function NeuralNetworkArchitecture({
             ))}
           </div>
         ))}
-        <div className="flex flex-col justify-evenly gap-6">
-          {numberOfOutputs <= 12
+        <div className="flex flex-col justify-evenly gap-4">
+          {numberOfOutputs <= 10
             ? [...Array(numberOfOutputs)].map((_, neuronIndex) => (
                 <div
                   key={`outputLayer-${neuronIndex}`}
                   className="z-10 size-10 rounded-full bg-primary"
                 />
               ))
-            : [...Array(13)].map((_, neuronIndex) => {
-                if (neuronIndex === 6) {
+            : [...Array(11)].map((_, neuronIndex) => {
+                if (neuronIndex === 5) {
                   return (
                     <section
                       className="flex flex-col items-center justify-center gap-1"
