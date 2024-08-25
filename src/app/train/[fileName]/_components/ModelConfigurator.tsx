@@ -30,8 +30,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Progress } from "@/components/ui/progress";
-import { saveModel } from "@/actions";
+import { getModel, saveModel } from "@/actions";
 
 export interface TrainingDataType {
   status: "training" | "preparing" | "complete" | "";
@@ -43,6 +42,8 @@ export interface TrainingDataType {
   f1Score: number;
   confusionMatrix: number[][];
   model: string;
+  labels: number[];
+  dataByLabels: ("Number" | string[])[];
 }
 
 interface ModelConfiguration {
@@ -73,7 +74,11 @@ export default function ModelConfigurator({
       activationFunction: "tanh",
       hiddenLayers: [4],
     });
-  const [model, setModel] = useState<string | null>(null);
+  const [modelData, setModel] = useState<{
+    model: string;
+    labels: number[];
+    dataByLabels: ("Number" | string[])[];
+  } | null>(null);
 
   function trainModel() {
     setStatus("preparing");
@@ -108,8 +113,12 @@ export default function ModelConfigurator({
       const data = JSON.parse(event.data) as TrainingDataType;
       if (data.status === "complete") {
         setStatus("complete");
-        setModel(data.model);
-        // console.log(JSON.parse(data.model));
+        console.log(data);
+        setModel({
+          model: data.model,
+          labels: data.labels,
+          dataByLabels: data.dataByLabels,
+        });
         eventSource.close();
         clearInterval(timerInterval);
         return;
@@ -391,10 +400,16 @@ export default function ModelConfigurator({
               <div>
                 <Button
                   onClick={() => {
-                    const modelJson = JSON.parse(model!);
-                    const modelData = {
+                    const modelJson = JSON.parse(modelData!.model);
+                    const modelDataObject = {
                       model: modelJson,
                       label: selectedColumn,
+                      inputSize: columns.length - 1,
+                      outputSize: uniqueOutputs.size,
+                      activationFunction: modelConfiguration.activationFunction,
+                      hiddenLayers: modelConfiguration.hiddenLayers,
+                      labels: modelData!.labels,
+                      dataByLabels: modelData!.dataByLabels,
                     };
                     saveModel(JSON.stringify(modelData), selectedColumn!);
                   }}
@@ -402,6 +417,22 @@ export default function ModelConfigurator({
                   Save model
                 </Button>
               </div>
+              <Button
+                onClick={async () => {
+                  const model = await getModel(selectedColumn!);
+                  console.log(model);
+                  const res = await fetch("http://127.0.0.1:5000/api/predict", {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(model),
+                  });
+                  console.log(res);
+                }}
+              >
+                Pred
+              </Button>
             </CardContent>
           </Card>
         </>

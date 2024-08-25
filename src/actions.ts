@@ -29,6 +29,17 @@ export async function saveModel(model: string, label: string) {
   // revalidatePath("/models");
 }
 
+export async function getModel(label: string) {
+  const filePath = path.join(
+    process.cwd(),
+    "public",
+    "models",
+    label + ".json",
+  );
+  const fileContect = await fs.readFile(filePath, "utf8");
+  return JSON.parse(fileContect);
+}
+
 export async function getCsvFileData(filePath: string) {
   return await fs.readFile(filePath, "utf8");
 }
