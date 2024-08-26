@@ -46,6 +46,7 @@ export interface TrainingDataType {
   model: string;
   labels: number[];
   dataByLabels: ("Number" | string[])[];
+  totalParams: number;
 }
 
 interface ModelConfiguration {
@@ -81,6 +82,7 @@ export default function ModelConfigurator({
     model: string;
     labels: number[];
     dataByLabels: ("Number" | string[])[];
+    totalParams: number;
   } | null>(null);
 
   const { toast } = useToast();
@@ -122,6 +124,7 @@ export default function ModelConfigurator({
           model: data.model,
           labels: data.labels,
           dataByLabels: data.dataByLabels,
+          totalParams: data.totalParams,
         });
         eventSource.close();
         clearInterval(timerInterval);
@@ -471,6 +474,7 @@ export default function ModelConfigurator({
                         hiddenLayers: modelConfiguration.hiddenLayers,
                         labels: modelData!.labels,
                         dataByLabels: modelData!.dataByLabels,
+                        totalParams: modelData!.totalParams,
                       };
                       await saveModel(
                         JSON.stringify(modelDataObject),
@@ -513,6 +517,7 @@ export default function ModelConfigurator({
                       hiddenLayers: modelConfiguration.hiddenLayers,
                       labels: modelData!.labels,
                       dataByLabels: modelData!.dataByLabels,
+                      totalParams: modelData!.totalParams,
                     };
                     saveModel(JSON.stringify(modelData), selectedColumn!);
                   }}
@@ -523,7 +528,6 @@ export default function ModelConfigurator({
               <Button
                 onClick={async () => {
                   const model = await getModel(selectedColumn!);
-                  console.log(model);
                   const res = await fetch("http://127.0.0.1:5000/api/predict", {
                     method: "POST",
                     headers: {

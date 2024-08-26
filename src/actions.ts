@@ -87,32 +87,32 @@ export async function readModels() {
   const csvDir = path.join(process.cwd(), "public", "models");
   const fileNames = await fs.readdir(csvDir);
 
-  return fileNames;
-  // const model = await fs.readFile(path.join(csvDir, fileNames[0]), "utf8");
-  // console.log(typeof model);
-  // const files = await Promise.all(
-  //   fileNames.map(async (fileName) => {
-  //     const { data } = Papa.parse(
-  //       await fs.readFile(path.join(csvDir, fileName), "utf8"),
-  //     );
-  // const { size, mtime, birthtime } = await fs.stat(
-  //   path.join(csvDir, fileName),
-  // );
-  // return {
-  //   name: fileName.replace(".csv", ""),
-  //   sizeInBytes: size,
-  //   importedTime: mtime,
-  //   createdTime: birthtime,
-  //   path: path.join(csvDir, fileName),
-  //   samples: data.length - 1,
-  //   // @ts-ignore
-  //   columnsNum: data[0].length,
-  //   columns: data[0],
-  // };
-  // }),
-  // );
+  const models = await Promise.all(
+    fileNames.map(async (fileName) => {
+      const { size, mtime, birthtime } = await fs.stat(
+        path.join(csvDir, fileName),
+      );
+      return {
+        name: fileName.replace(".json", ""),
+        sizeInBytes: size,
+        importedTime: mtime,
+        createdTime: birthtime,
+        path: path.join(csvDir, fileName),
+      };
+    }),
+  );
 
-  // return files;
+  return models;
+}
+
+export async function removeModels(filePaths: string[]) {
+  console.log(filePaths);
+  await Promise.all(
+    filePaths.map(async (filePath) => {
+      await fs.unlink(filePath);
+    }),
+  );
+  revalidatePath("/models");
 }
 
 export async function removeFiles(filePaths: string[]) {
