@@ -18,15 +18,15 @@ export default async function uploadCsv({
   revalidatePath("/train");
 }
 
-export async function saveModel(model: string, label: string) {
+export async function saveModel(model: string, modelName: string) {
   const filePath = path.join(
     process.cwd(),
     "public",
     "models",
-    label + ".json",
+    modelName + ".json",
   );
   await fs.writeFile(filePath, model);
-  // revalidatePath("/models");
+  revalidatePath("/models");
 }
 
 export async function getModel(label: string) {
@@ -81,6 +81,38 @@ export async function readFiles() {
   );
 
   return files;
+}
+
+export async function readModels() {
+  const csvDir = path.join(process.cwd(), "public", "models");
+  const fileNames = await fs.readdir(csvDir);
+
+  return fileNames;
+  // const model = await fs.readFile(path.join(csvDir, fileNames[0]), "utf8");
+  // console.log(typeof model);
+  // const files = await Promise.all(
+  //   fileNames.map(async (fileName) => {
+  //     const { data } = Papa.parse(
+  //       await fs.readFile(path.join(csvDir, fileName), "utf8"),
+  //     );
+  // const { size, mtime, birthtime } = await fs.stat(
+  //   path.join(csvDir, fileName),
+  // );
+  // return {
+  //   name: fileName.replace(".csv", ""),
+  //   sizeInBytes: size,
+  //   importedTime: mtime,
+  //   createdTime: birthtime,
+  //   path: path.join(csvDir, fileName),
+  //   samples: data.length - 1,
+  //   // @ts-ignore
+  //   columnsNum: data[0].length,
+  //   columns: data[0],
+  // };
+  // }),
+  // );
+
+  // return files;
 }
 
 export async function removeFiles(filePaths: string[]) {

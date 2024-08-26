@@ -14,7 +14,6 @@ import {
   RadialBarChart,
 } from "recharts";
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
-import { Progress } from "@/components/ui/progress";
 
 const chartConfig = {
   accuracy: {
@@ -23,47 +22,14 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export default function TrainingResults({
-  progress,
   data,
   trainingTime,
 }: {
-  progress: number;
   data: TrainingDataType[];
   trainingTime: number;
 }) {
   return (
-    <div className="grid grid-cols-4 gap-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Training progress</CardTitle>
-          <CardDescription>
-            Track the training progress of your model.
-          </CardDescription>
-        </CardHeader>
-        <div>
-          <CardContent>
-            <div className="relative flex flex-col items-center justify-center gap-1 text-sm text-muted-foreground">
-              <Progress className="h-7" value={progress} />
-              <p className="absolute font-medium text-secondary">
-                {progress.toFixed(0)}%
-              </p>
-            </div>
-          </CardContent>
-        </div>
-        <div>
-          <CardTitle className="mb-1 text-center">Training time</CardTitle>
-          <CardContent>
-            <div className="flex flex-col items-center justify-center text-xl font-medium">
-              <p>
-                {Math.floor(trainingTime / 60)
-                  .toString()
-                  .padStart(2, "0")}{" "}
-                : {(trainingTime % 60).toFixed(0).toString().padStart(2, "0")}
-              </p>
-            </div>
-          </CardContent>
-        </div>
-      </Card>
+    <div className="">
       <Card className="col-span-3">
         <CardHeader>
           <CardTitle>Training results</CardTitle>

@@ -31,9 +31,11 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { getModel, saveModel } from "@/actions";
+import { Progress } from "@/components/ui/progress";
+import { useToast } from "@/components/ui/use-toast";
 
 export interface TrainingDataType {
-  status: "training" | "preparing" | "complete" | "";
+  status: "training" | "preparing" | "complete" | "" | "saved";
   iteration: string;
   trainLoss: number;
   trainAccuracy: number;
@@ -66,6 +68,7 @@ export default function ModelConfigurator({
   const [status, setStatus] = useState<string>("");
   const [trainingData, setTrainingData] = useState<[] | TrainingDataType[]>([]);
   const [trainingTime, setTrainingTime] = useState<number>(0);
+  const [modelName, setModelName] = useState<string>("");
   const [modelConfiguration, setModelConfiguration] =
     useState<ModelConfiguration>({
       iterations: 100,
@@ -79,6 +82,8 @@ export default function ModelConfigurator({
     labels: number[];
     dataByLabels: ("Number" | string[])[];
   } | null>(null);
+
+  const { toast } = useToast();
 
   function trainModel() {
     setStatus("preparing");
@@ -113,7 +118,6 @@ export default function ModelConfigurator({
       const data = JSON.parse(event.data) as TrainingDataType;
       if (data.status === "complete") {
         setStatus("complete");
-        console.log(data);
         setModel({
           model: data.model,
           labels: data.labels,
@@ -374,20 +378,119 @@ export default function ModelConfigurator({
               </Button>
             </CardFooter>
           </Card>
-
-          <TrainingResults
-            progress={
-              status === "complete"
-                ? 100
-                : trainingData.length > 0
-                  ? (Number(trainingData[trainingData.length - 1].iteration) /
-                      modelConfiguration.iterations) *
-                    100
-                  : 0
-            }
-            trainingTime={trainingTime}
-            data={trainingData}
-          />
+          <div className="grid grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Training progress</CardTitle>
+                <CardDescription>
+                  Track the training progress of your model.
+                </CardDescription>
+              </CardHeader>
+              <div>
+                <CardContent>
+                  <div className="relative flex flex-col items-center justify-center gap-1 text-sm text-muted-foreground">
+                    <Progress
+                      className="h-7"
+                      value={
+                        status === "complete"
+                          ? 100
+                          : trainingData.length > 0
+                            ? (Number(
+                                trainingData[trainingData.length - 1].iteration,
+                              ) /
+                                modelConfiguration.iterations) *
+                              100
+                            : 0
+                      }
+                    />
+                    <p className="absolute font-medium text-secondary">
+                      {(status === "complete"
+                        ? 100
+                        : trainingData.length > 0
+                          ? (Number(
+                              trainingData[trainingData.length - 1].iteration,
+                            ) /
+                              modelConfiguration.iterations) *
+                            100
+                          : 0
+                      ).toFixed(0)}
+                      %
+                    </p>
+                  </div>
+                </CardContent>
+              </div>
+              <div>
+                <CardTitle className="mb-1 text-center">
+                  Training time
+                </CardTitle>
+                <CardContent>
+                  <div className="flex flex-col items-center justify-center text-xl font-medium">
+                    <p>
+                      {Math.floor(trainingTime / 60)
+                        .toString()
+                        .padStart(2, "0")}{" "}
+                      :{" "}
+                      {(trainingTime % 60)
+                        .toFixed(0)
+                        .toString()
+                        .padStart(2, "0")}
+                    </p>
+                  </div>
+                </CardContent>
+              </div>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Save model</CardTitle>
+                <CardDescription>
+                  Save current trained model for future use.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex w-full flex-col items-center space-y-3">
+                  <Input
+                    value={modelName}
+                    onChange={(e) => setModelName(e.target.value)}
+                    disabled={status !== "complete"}
+                    type="modelName"
+                    placeholder="Name your model"
+                  />
+                  <Button
+                    disabled={status !== "complete" || modelName.length < 1}
+                    type="submit"
+                    className="w-full"
+                    onClick={async () => {
+                      const modelJson = JSON.parse(modelData!.model);
+                      const modelDataObject = {
+                        model: modelJson,
+                        label: selectedColumn,
+                        inputSize: columns.length - 1,
+                        outputSize: uniqueOutputs.size,
+                        activationFunction:
+                          modelConfiguration.activationFunction,
+                        hiddenLayers: modelConfiguration.hiddenLayers,
+                        labels: modelData!.labels,
+                        dataByLabels: modelData!.dataByLabels,
+                      };
+                      await saveModel(
+                        JSON.stringify(modelDataObject),
+                        modelName,
+                      );
+                      toast({
+                        title: "Model saved.",
+                        description: `Model "${modelName}" saved successfully.`,
+                      });
+                      setStatus("saved");
+                      setModelName("");
+                    }}
+                  >
+                    {status === "saved" ? "Model saved." : "Save"}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          <TrainingResults trainingTime={trainingTime} data={trainingData} />
           <Charts labels={Array.from(uniqueOutputs)} data={trainingData} />
           <Card>
             <CardHeader>
