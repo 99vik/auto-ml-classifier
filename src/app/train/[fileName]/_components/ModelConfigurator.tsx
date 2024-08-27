@@ -86,7 +86,6 @@ export default function ModelConfigurator({
   } | null>(null);
 
   const { toast } = useToast();
-
   function trainModel() {
     setStatus("preparing");
     setTrainingData([]);
@@ -160,6 +159,7 @@ export default function ModelConfigurator({
         <CardContent>
           <Select
             onValueChange={(value) => {
+              setTrainingData([]);
               setSelectedColumn(value);
               const { data } = Papa.parse(fileData) as {
                 data: (string | number)[][];
@@ -467,6 +467,7 @@ export default function ModelConfigurator({
                       const modelDataObject = {
                         model: modelJson,
                         label: selectedColumn,
+                        columns: columns,
                         inputSize: columns.length - 1,
                         outputSize: uniqueOutputs.size,
                         activationFunction:

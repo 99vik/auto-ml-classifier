@@ -4,6 +4,7 @@ import fs from "fs/promises";
 import path from "path";
 import Papa from "papaparse";
 import { revalidatePath } from "next/cache";
+import { ModelData } from "./types";
 
 export default async function uploadCsv({
   dataArray,
@@ -31,7 +32,18 @@ export async function saveModel(model: string, modelName: string) {
 
 export async function getModel(path: string) {
   const fileContent = await fs.readFile(path, "utf8");
-  return JSON.parse(fileContent);
+  return JSON.parse(fileContent) as ModelData;
+}
+
+export async function getModelByName(modelName: string) {
+  const filePath = path.join(
+    process.cwd(),
+    "public",
+    "models",
+    modelName + ".json",
+  );
+  const fileContent = await fs.readFile(filePath, "utf8");
+  return JSON.parse(fileContent) as ModelData;
 }
 
 export async function getCsvFileData(filePath: string) {

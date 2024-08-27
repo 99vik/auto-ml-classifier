@@ -1,7 +1,8 @@
-import { getDataByFileName } from "@/actions";
+import { getDataByFileName, getModelByName } from "@/actions";
 import { Button, buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 import { MoveLeft } from "lucide-react";
+import Predictor from "./_components/Predictor";
 
 export default async function Page({
   params,
@@ -9,7 +10,7 @@ export default async function Page({
   params: { modelName: string };
 }) {
   const { modelName } = params;
-  //   const { fileData, columns } = await getDataByFileName(modelName);
+  const modelData = await getModelByName(modelName);
 
   return (
     <>
@@ -23,7 +24,7 @@ export default async function Page({
         <MoveLeft size={16} strokeWidth={2} />
         Back to model selector
       </Link>
-      <p>Predict {modelName}</p>
+      <Predictor modelData={modelData} />
     </>
   );
 }
