@@ -98,7 +98,11 @@ export default function ModelSelector({
               <p className="text-sm font-medium text-muted-foreground">
                 Possible outputs ({modelData.outputSize})
               </p>
-              <p>{modelData.dataByLabels[modelData.labelIndex].join(", ")}</p>
+              <p>
+                {(
+                  modelData.dataByLabels[modelData.labelIndex] as string[]
+                ).join(", ")}
+              </p>
             </div>
             <div className="space-y-1">
               <p className="text-sm font-medium text-muted-foreground">
