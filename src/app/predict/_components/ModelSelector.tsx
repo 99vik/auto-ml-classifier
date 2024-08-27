@@ -47,8 +47,6 @@ export default function ModelSelector({
     enabled: selectedModel !== undefined,
   });
 
-  console.log(modelData);
-
   return (
     <>
       <Card>
@@ -101,6 +99,18 @@ export default function ModelSelector({
                 Possible outputs ({modelData.outputSize})
               </p>
               <p>{modelData.dataByLabels[modelData.labelIndex].join(", ")}</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-muted-foreground">
+                Accuracy on test set
+              </p>
+              <p>{modelData.accuracy}%</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-muted-foreground">
+                F1 score
+              </p>
+              <p>{modelData.f1Score}</p>
             </div>
             <div className="space-y-1">
               <p className="text-sm font-medium text-muted-foreground">

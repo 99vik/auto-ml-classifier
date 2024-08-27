@@ -476,6 +476,9 @@ export default function ModelConfigurator({
                         dataByLabels: modelData!.dataByLabels,
                         totalParams: modelData!.totalParams,
                         labelIndex: columns.indexOf(selectedColumn!),
+                        f1Score: trainingData[trainingData.length - 1].f1Score,
+                        accuracy:
+                          trainingData[trainingData.length - 1].testAccuracy,
                       };
                       await saveModel(
                         JSON.stringify(modelDataObject),
