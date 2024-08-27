@@ -475,6 +475,7 @@ export default function ModelConfigurator({
                         labels: modelData!.labels,
                         dataByLabels: modelData!.dataByLabels,
                         totalParams: modelData!.totalParams,
+                        labelIndex: columns.indexOf(selectedColumn!),
                       };
                       await saveModel(
                         JSON.stringify(modelDataObject),
@@ -504,27 +505,6 @@ export default function ModelConfigurator({
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div>
-                <Button
-                  onClick={() => {
-                    const modelJson = JSON.parse(modelData!.model);
-                    const modelDataObject = {
-                      model: modelJson,
-                      label: selectedColumn,
-                      inputSize: columns.length - 1,
-                      outputSize: uniqueOutputs.size,
-                      activationFunction: modelConfiguration.activationFunction,
-                      hiddenLayers: modelConfiguration.hiddenLayers,
-                      labels: modelData!.labels,
-                      dataByLabels: modelData!.dataByLabels,
-                      totalParams: modelData!.totalParams,
-                    };
-                    saveModel(JSON.stringify(modelData), selectedColumn!);
-                  }}
-                >
-                  Save model
-                </Button>
-              </div>
               <Button
                 onClick={async () => {
                   const model = await getModel(selectedColumn!);
