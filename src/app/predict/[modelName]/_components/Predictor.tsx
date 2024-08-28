@@ -1,11 +1,13 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
   CardContent,
+  CardFooter,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -15,8 +17,32 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-export default function Predictor({ modelData }: { modelData: any }) {
+import { ModelData } from "@/types";
+import { useState } from "react";
+
+interface InputData {
+  [key: string]: number | string | null;
+}
+
+export default function Predictor({ modelData }: { modelData: ModelData }) {
+  const [inputData, setInputData] = useState<InputData>(() => {
+    const a: InputData = {};
+    modelData.columns
+      .filter((_: string, index: number) => index !== modelData.labelIndex)
+      .map((column: string, index: number) => {
+        a[column] = null;
+      });
+    return a;
+  });
+  console.log(inputData);
   console.log(modelData);
+
+  function handleInputChange(column: string, value: string | number) {
+    setInputData((prevState: InputData) => {
+      return { ...prevState, [column]: value };
+    });
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -32,11 +58,11 @@ export default function Predictor({ modelData }: { modelData: any }) {
               (_: string, index: number) => index !== modelData.labelIndex,
             )
             .map((column: string, index: number) => {
-              const isNumber =
-                modelData.dataByLabels.filter(
-                  (_: string, indexData: number) =>
-                    indexData !== modelData.labelIndex,
-                )[index] === "Number";
+              const columnData = modelData.dataByLabels.filter(
+                (_: any, indexData: number) =>
+                  indexData !== modelData.labelIndex,
+              )[index];
+              const isNumber = columnData === "Number";
 
               return (
                 <div
@@ -49,21 +75,30 @@ export default function Predictor({ modelData }: { modelData: any }) {
                       id={column}
                       type="number"
                       placeholder={`Enter ${column}`}
-                      //   onChange={(e) => handleInputChange(column, e.target.value)}
-                      className="w-full"
+                      onWheel={(e: any) => e.target.blur()}
+                      onChange={(e) =>
+                        handleInputChange(column, Number(e.target.value))
+                      }
+                      className="w-full [&::-webkit-inner-spin-button]:appearance-none"
                     />
                   ) : (
                     <Select
-                    //   onValueChange={(value) => handleInputChange(column, value)}
+                      onValueChange={(value) =>
+                        handleInputChange(column, value)
+                      }
                     >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder={`Select ${column}`} />
                       </SelectTrigger>
                       <SelectContent>
-                        {/* Replace with actual options for this column */}
-                        <SelectItem value="option1">Option 1</SelectItem>
-                        <SelectItem value="option2">Option 2</SelectItem>
-                        <SelectItem value="option3">Option 3</SelectItem>
+                        {columnData.map((option: string) => (
+                          <SelectItem
+                            key={`${column}-${option}`}
+                            value={option}
+                          >
+                            {option}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   )}
@@ -71,42 +106,15 @@ export default function Predictor({ modelData }: { modelData: any }) {
               );
             })}
         </div>
-        {/* <div>
-          {modelData.columns
-            .filter(
-              (_: string, index: number) => index !== modelData.labelIndex,
-            )
-            .map((column: string, index: number) => (
-              <div key={index} className="flex gap-2">
-                <p className="">{column}</p>
-                <p>
-                  {modelData.dataByLabels.filter(
-                    (_: string, indexData: number) =>
-                      indexData !== modelData.labelIndex,
-                  )[index] === "Number"
-                    ? "number"
-                    : "select"}
-                </p>
-              </div>
-            ))}
-        </div> */}
-        {/* <Select
-            onValueChange={(value) =>
-              setSelectedModel(models.find((model) => model.path === value))
-            }
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select model" />
-            </SelectTrigger>
-            <SelectContent>
-              {models.map((model) => (
-                <SelectItem key={model.name} value={model.path}>
-                  {model.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select> */}
       </CardContent>
+      <CardFooter>
+        <Button
+          //   onClick={handlePredict}
+          className="w-full"
+        >
+          Make Prediction
+        </Button>
+      </CardFooter>
     </Card>
   );
 }
