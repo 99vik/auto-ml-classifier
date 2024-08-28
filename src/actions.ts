@@ -4,7 +4,7 @@ import fs from "fs/promises";
 import path from "path";
 import Papa from "papaparse";
 import { revalidatePath } from "next/cache";
-import { ModelData } from "./types";
+import { InputData, ModelData } from "./types";
 
 export default async function uploadCsv({
   dataArray,
@@ -44,6 +44,12 @@ export async function getModelByName(modelName: string) {
   );
   const fileContent = await fs.readFile(filePath, "utf8");
   return JSON.parse(fileContent) as ModelData;
+}
+
+export async function predictLabel(modelData: ModelData, inputData: InputData) {
+  console.log(modelData);
+  console.log(inputData);
+  return "test";
 }
 
 export async function getCsvFileData(filePath: string) {

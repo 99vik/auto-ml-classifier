@@ -1,5 +1,6 @@
 "use client";
 
+import { predictLabel } from "@/actions";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -17,12 +18,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ModelData } from "@/types";
+import { InputData, ModelData } from "@/types";
+import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
-
-interface InputData {
-  [key: string]: number | string | null;
-}
 
 export default function Predictor({ modelData }: { modelData: ModelData }) {
   const [inputData, setInputData] = useState<InputData>(() => {
@@ -37,10 +35,28 @@ export default function Predictor({ modelData }: { modelData: ModelData }) {
   console.log(inputData);
   console.log(modelData);
 
+  const {
+    mutate: predict,
+    data,
+    isPending,
+  } = useMutation({
+    mutationFn: () => predictLabel(modelData, inputData),
+  });
+
+  console.log(data);
+
   function handleInputChange(column: string, value: string | number) {
     setInputData((prevState: InputData) => {
       return { ...prevState, [column]: value };
     });
+  }
+
+  function handlePredict() {
+    if (Object.values(inputData).some((value) => value === null)) {
+      console.log("Please fill all inputs");
+    } else {
+      predict();
+    }
   }
 
   return (
@@ -109,6 +125,7 @@ export default function Predictor({ modelData }: { modelData: ModelData }) {
       </CardContent>
       <CardFooter>
         <Button
+          onClick={handlePredict}
           //   onClick={handlePredict}
           className="w-full"
         >

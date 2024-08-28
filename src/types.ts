@@ -13,3 +13,7 @@ export interface ModelData {
   f1Score: number;
   accuracy: number;
 }
+
+export interface InputData {
+  [key: string]: number | string | null;
+}
