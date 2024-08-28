@@ -47,7 +47,7 @@ export default function Predictor({ modelData }: { modelData: ModelData }) {
 
   function handleInputChange(column: string, value: string | number) {
     setInputData((prevState: InputData) => {
-      return { ...prevState, [column]: value };
+      return { ...prevState, [column]: Number(value) };
     });
   }
 
@@ -107,14 +107,20 @@ export default function Predictor({ modelData }: { modelData: ModelData }) {
                         <SelectValue placeholder={`Select ${column}`} />
                       </SelectTrigger>
                       <SelectContent>
-                        {columnData.map((option: string) => (
-                          <SelectItem
-                            key={`${column}-${option}`}
-                            value={option}
-                          >
-                            {option}
-                          </SelectItem>
-                        ))}
+                        {columnData.map(
+                          (option: string, columnIndex: number) => (
+                            <SelectItem
+                              key={`${column}-${option}`}
+                              value={String(
+                                columnData.findIndex(
+                                  (value) => value === option,
+                                ),
+                              )}
+                            >
+                              {option}
+                            </SelectItem>
+                          ),
+                        )}
                       </SelectContent>
                     </Select>
                   )}

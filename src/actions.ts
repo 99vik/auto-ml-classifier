@@ -47,9 +47,23 @@ export async function getModelByName(modelName: string) {
 }
 
 export async function predictLabel(modelData: ModelData, inputData: InputData) {
-  console.log(modelData);
-  console.log(inputData);
-  return "test";
+  const reqBody = {
+    model: modelData.model,
+    inputSize: modelData.inputSize,
+    outputSize: modelData.outputSize,
+    activationFunction: modelData.activationFunction,
+    hiddenLayers: modelData.hiddenLayers,
+    inputs: Object.values(inputData),
+  };
+  const res = await fetch("http://127.0.0.1:5000/api/predict", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(reqBody),
+  });
+  const data = await res.json();
+  return data.prediction;
 }
 
 export async function getCsvFileData(filePath: string) {
@@ -59,7 +73,6 @@ export async function getCsvFileData(filePath: string) {
 export async function getDataByFileName(fileName: string) {
   const filePath = path.join(process.cwd(), "public", "csv", fileName + ".csv");
   const fileData = await fs.readFile(filePath, "utf8");
-  // console.log(fileData);
   const { data } = Papa.parse(fileData);
   return { fileData: fileData, columns: data[0] } as {
     fileData: string;

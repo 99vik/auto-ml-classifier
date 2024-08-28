@@ -501,31 +501,6 @@ export default function ModelConfigurator({
           </div>
           <TrainingResults trainingTime={trainingTime} data={trainingData} />
           <Charts labels={Array.from(uniqueOutputs)} data={trainingData} />
-          <Card>
-            <CardHeader>
-              <CardTitle>Model</CardTitle>
-              <CardDescription>
-                The trained model in JSON format.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button
-                onClick={async () => {
-                  const model = await getModel(selectedColumn!);
-                  const res = await fetch("http://127.0.0.1:5000/api/predict", {
-                    method: "POST",
-                    headers: {
-                      "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(model),
-                  });
-                  console.log(res);
-                }}
-              >
-                Pred
-              </Button>
-            </CardContent>
-          </Card>
         </>
       )}
     </>
