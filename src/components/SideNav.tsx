@@ -5,6 +5,7 @@ import {
   ArrowLeftToLine,
   ArrowRightToLine,
   Brain,
+  Cpu,
   Database,
   Layers,
   Puzzle,
