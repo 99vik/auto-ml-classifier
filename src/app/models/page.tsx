@@ -2,7 +2,7 @@
 
 import { readModels, removeModels } from "@/actions";
 import { readFiles, removeFiles } from "@/actions";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
@@ -13,6 +13,7 @@ import {
 import { cn, formatBytes } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { Ellipsis, Trash } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 export default function Page() {
@@ -59,7 +60,7 @@ export default function Page() {
                 className="gap-2 text-destructive hover:text-destructive"
               >
                 <Trash size={12} />
-                Delete datasets
+                Delete model/s
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -130,7 +131,15 @@ export default function Page() {
                       })}
                     </p>
                     <div>
-                      <Button>options</Button>
+                      <Link
+                        className={buttonVariants({
+                          size: "sm",
+                          className: "w-full",
+                        })}
+                        href={`/predict/${model.name}`}
+                      >
+                        Predict
+                      </Link>
                     </div>
                   </div>
                 ))}

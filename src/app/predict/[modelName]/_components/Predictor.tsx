@@ -25,13 +25,13 @@ import { useState } from "react";
 export default function Predictor({ modelData }: { modelData: ModelData }) {
   const [result, setResult] = useState<string | null>(null);
   const [inputData, setInputData] = useState<InputData>(() => {
-    const a: InputData = {};
+    const input: InputData = {};
     modelData.columns
       .filter((_: string, index: number) => index !== modelData.labelIndex)
       .map((column: string, index: number) => {
-        a[column] = null;
+        input[column] = null;
       });
-    return a;
+    return input;
   });
 
   const { mutate: predict } = useMutation({
@@ -64,6 +64,17 @@ export default function Predictor({ modelData }: { modelData: ModelData }) {
 
   return (
     <>
+      <Card>
+        <CardHeader>
+          <CardTitle>Prediction</CardTitle>
+          <CardDescription>The prediction for the input data.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="text-center text-lg font-medium">
+            {result ? result : "-"}
+          </p>
+        </CardContent>
+      </Card>
       <Card>
         <CardHeader>
           <CardTitle>Select inputs</CardTitle>
@@ -134,21 +145,17 @@ export default function Predictor({ modelData }: { modelData: ModelData }) {
           </div>
         </CardContent>
         <CardFooter>
-          <Button onClick={handlePredict} className="w-full">
+          <Button
+            disabled={Boolean(
+              result ||
+                Object.values(inputData).some((value) => value === null),
+            )}
+            onClick={handlePredict}
+            className="w-full"
+          >
             Make Prediction
           </Button>
         </CardFooter>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>Prediction</CardTitle>
-          <CardDescription>The prediction for the input data.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-center text-lg font-medium">
-            {result ? result : "-"}
-          </p>
-        </CardContent>
       </Card>
     </>
   );

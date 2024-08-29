@@ -1,7 +1,7 @@
 "use client";
 
 import { readFiles, removeFiles } from "@/actions";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
@@ -13,9 +13,15 @@ import UploadDialog from "./_components/UploadDialog";
 import CsvFileDataDialog from "./_components/CsvFileDataDialog";
 import { cn, formatBytes } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
-import { Ellipsis, Trash } from "lucide-react";
+import {
+  CircleEllipsis,
+  Ellipsis,
+  EllipsisVertical,
+  Trash,
+} from "lucide-react";
 import { useState } from "react";
 import { CsvDownloader } from "./_components/CsvDownloader";
+import Link from "next/link";
 
 export default function Page() {
   const [checkedBoxes, setCheckedBoxes] = useState<string[]>([]);
@@ -62,7 +68,7 @@ export default function Page() {
                 className="gap-2 text-destructive hover:text-destructive"
               >
                 <Trash size={12} />
-                Delete datasets
+                Delete dataset/s
               </DropdownMenuItem>
               <CsvDownloader
                 resetCheckBoxes={() => {
@@ -139,11 +145,19 @@ export default function Page() {
                         year: "numeric",
                       })}
                     </p>
-                    <div>
+                    <div className="grid grid-cols-2 gap-2">
                       <CsvFileDataDialog
                         fileName={file.name}
                         filePath={file.path}
                       />
+                      <Link
+                        className={buttonVariants({
+                          size: "sm",
+                        })}
+                        href={`/train/${file.name}`}
+                      >
+                        Train
+                      </Link>
                     </div>
                   </div>
                 ))}
