@@ -70,6 +70,37 @@ export async function getCsvFileData(filePath: string) {
   return await fs.readFile(filePath, "utf8");
 }
 
+export async function getCsvFilesForDownload({ paths }: { paths: string[] }) {
+  console.log(paths);
+  const files = await Promise.all(
+    paths.map(async (filePath) => {
+      const fileData = await fs.readFile(filePath, "utf8");
+      const fileName = path.basename(filePath);
+
+      return {
+        fileName: fileName,
+        content: fileData,
+      };
+    }),
+    //   const { size, mtime, birthtime } = await fs.stat(
+    //     path.join(csvDir, fileName),
+    //   );
+    //   return {
+    //     name: fileName.replace(".csv", ""),
+    //     sizeInBytes: size,
+    //     importedTime: mtime,
+    //     createdTime: birthtime,
+    //     path: path.join(csvDir, fileName),
+    //     samples: data.length - 1,
+    //     // @ts-ignore
+    //     columnsNum: data[0].length,
+    //     columns: data[0],
+    //   };
+    // }),
+  );
+  return files;
+}
+
 export async function getDataByFileName(fileName: string) {
   const filePath = path.join(process.cwd(), "public", "csv", fileName + ".csv");
   const fileData = await fs.readFile(filePath, "utf8");

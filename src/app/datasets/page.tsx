@@ -15,6 +15,7 @@ import { cn, formatBytes } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { Ellipsis, Trash } from "lucide-react";
 import { useState } from "react";
+import { CsvDownloader } from "./_components/CsvDownloader";
 
 export default function Page() {
   const [checkedBoxes, setCheckedBoxes] = useState<string[]>([]);
@@ -63,6 +64,13 @@ export default function Page() {
                 <Trash size={12} />
                 Delete datasets
               </DropdownMenuItem>
+              <CsvDownloader
+                resetCheckBoxes={() => {
+                  setCheckedBoxes([]);
+                  setAllChecked(false);
+                }}
+                checkedBoxes={checkedBoxes}
+              />
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
