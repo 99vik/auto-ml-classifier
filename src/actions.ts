@@ -24,7 +24,7 @@ export async function saveModel(model: string, modelName: string) {
     process.cwd(),
     "public",
     "models",
-    modelName + ".json",
+    modelName.trim() + ".json",
   );
   await fs.writeFile(filePath, model);
   revalidatePath("/models");
@@ -40,7 +40,7 @@ export async function getModelByName(modelName: string) {
     process.cwd(),
     "public",
     "models",
-    modelName + ".json",
+    decodeURIComponent(modelName) + ".json",
   );
   const fileContent = await fs.readFile(filePath, "utf8");
   return JSON.parse(fileContent) as ModelData;
