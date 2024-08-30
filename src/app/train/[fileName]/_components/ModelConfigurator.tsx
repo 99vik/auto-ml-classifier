@@ -86,6 +86,7 @@ export default function ModelConfigurator({
   } | null>(null);
 
   const { toast } = useToast();
+
   function trainModel() {
     setStatus("preparing");
     setTrainingData([]);
@@ -134,6 +135,12 @@ export default function ModelConfigurator({
       }
       setStatus("training");
       setTrainingData((prevData) => [...prevData, data]);
+      if (Number(data.iteration) === modelConfiguration.iterations) {
+        toast({
+          title: "Model trained successfully",
+          description: `Model trained with final accuracy of ${data.testAccuracy.toFixed(1)}% on test set.`,
+        });
+      }
     };
 
     timerInterval = setInterval(() => {
@@ -374,10 +381,16 @@ export default function ModelConfigurator({
             <CardFooter className="border-t pt-4">
               <Button
                 onClick={trainModel}
-                disabled={selectedColumn === null || status === "training"}
+                disabled={
+                  selectedColumn === null ||
+                  status === "training" ||
+                  status === "preparing"
+                }
                 className="w-full"
               >
-                {status === "training" ? "Training..." : "Train model"}
+                {status === "training" || status === "preparing"
+                  ? "Training..."
+                  : "Train model"}
               </Button>
             </CardFooter>
           </Card>
