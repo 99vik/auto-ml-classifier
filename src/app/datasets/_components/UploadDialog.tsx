@@ -13,6 +13,7 @@ import CsvDropzone from "./CsvDropzone";
 import Papa from "papaparse";
 import uploadCsv from "@/actions";
 import CsvPreview from "./CsvPreview";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function UploadDialog({ refetch }: { refetch: () => void }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -20,6 +21,8 @@ export default function UploadDialog({ refetch }: { refetch: () => void }) {
   const [step, setStep] = useState<"upload" | "preview">("upload");
   const [file, setFile] = useState<File | null>(null);
   const [checkedColumns, setCheckedColumns] = useState<number[]>([]);
+
+  const { toast } = useToast();
 
   async function handleImport() {
     setIsLoading(true);
@@ -29,13 +32,25 @@ export default function UploadDialog({ refetch }: { refetch: () => void }) {
           checkedColumns.map((index) => row[index]),
         );
         data.pop();
-        await uploadCsv({ dataArray: data, fileName: file!.name });
-        refetch();
-        setOpen(false);
-        setTimeout(() => {
+        try {
+          await uploadCsv({ dataArray: data, fileName: file!.name });
+          refetch();
+          setOpen(false);
+          setTimeout(() => {
+            setIsLoading(false);
+            setStep("upload");
+          }, 300);
+          toast({
+            title: "File uploaded successfully",
+          });
+        } catch (error) {
+          toast({
+            variant: "destructive",
+            title: "Error uploading file",
+            description: "Please try again.",
+          });
           setIsLoading(false);
-          setStep("upload");
-        }, 300);
+        }
       },
       error: (error) => {
         console.error(error);
