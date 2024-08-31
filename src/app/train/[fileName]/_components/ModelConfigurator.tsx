@@ -35,7 +35,7 @@ import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/components/ui/use-toast";
 
 export interface TrainingDataType {
-  status: "training" | "preparing" | "complete" | "" | "saved";
+  status: "training" | "preparing" | "complete" | "" | "saved" | "error";
   iteration: string;
   trainLoss: number;
   trainAccuracy: number;
@@ -47,6 +47,7 @@ export interface TrainingDataType {
   labels: number[];
   dataByLabels: ("Number" | string[])[];
   totalParams: number;
+  error: string;
 }
 
 interface ModelConfiguration {
@@ -131,6 +132,19 @@ export default function ModelConfigurator({
         return;
       }
       if (data.status === "preparing") {
+        return;
+      }
+      if (data.status === "error") {
+        eventSource.close();
+        clearInterval(timerInterval);
+        setTrainingTime(0);
+        setTrainingData([]);
+        setStatus("");
+        toast({
+          variant: "destructive",
+          title: "Error training model.",
+          description: data.error,
+        });
         return;
       }
       setStatus("training");

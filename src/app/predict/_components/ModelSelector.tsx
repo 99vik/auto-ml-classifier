@@ -108,13 +108,13 @@ export default function ModelSelector({
               <p className="text-sm font-medium text-muted-foreground">
                 Accuracy on test set
               </p>
-              <p>{modelData.accuracy}%</p>
+              <p>{modelData.accuracy.toFixed(2)}%</p>
             </div>
             <div className="space-y-1">
               <p className="text-sm font-medium text-muted-foreground">
                 F1 score
               </p>
-              <p>{modelData.f1Score}</p>
+              <p>{modelData.f1Score.toFixed(2)}</p>
             </div>
             <div className="space-y-1">
               <p className="text-sm font-medium text-muted-foreground">
@@ -125,7 +125,7 @@ export default function ModelSelector({
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">
-                  File size
+                  Model size
                 </p>
                 <p>{formatBytes(selectedModel!.sizeInBytes)}</p>
               </div>
