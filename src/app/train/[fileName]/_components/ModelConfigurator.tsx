@@ -35,6 +35,7 @@ import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/components/ui/use-toast";
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
+import { normalize } from "path";
 
 export interface TrainingDataType {
   status: "training" | "preparing" | "complete" | "" | "saved" | "error";
@@ -572,6 +573,7 @@ export default function ModelConfigurator({
                         dataByLabels: modelData!.dataByLabels,
                         totalParams: modelData!.totalParams,
                         labelIndex: columns.indexOf(selectedColumn!),
+                        normalization: modelConfiguration.normalization,
                         f1Score: trainingData[trainingData.length - 1].f1Score,
                         accuracy:
                           trainingData[trainingData.length - 1].testAccuracy,

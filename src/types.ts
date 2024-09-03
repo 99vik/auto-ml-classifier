@@ -12,6 +12,7 @@ export interface ModelData {
   labelIndex: number;
   f1Score: number;
   accuracy: number;
+  normalization: boolean;
 }
 
 export interface InputData {
