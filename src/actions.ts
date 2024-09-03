@@ -82,21 +82,6 @@ export async function getCsvFilesForDownload({ paths }: { paths: string[] }) {
         content: fileData,
       };
     }),
-    //   const { size, mtime, birthtime } = await fs.stat(
-    //     path.join(csvDir, fileName),
-    //   );
-    //   return {
-    //     name: fileName.replace(".csv", ""),
-    //     sizeInBytes: size,
-    //     importedTime: mtime,
-    //     createdTime: birthtime,
-    //     path: path.join(csvDir, fileName),
-    //     samples: data.length - 1,
-    //     // @ts-ignore
-    //     columnsNum: data[0].length,
-    //     columns: data[0],
-    //   };
-    // }),
   );
   return files;
 }

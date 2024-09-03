@@ -58,6 +58,9 @@ interface ModelConfiguration {
   learningRate: number;
   activationFunction: "relu" | "tanh" | "sigmoid" | "linear";
   hiddenLayers: number[];
+  normalization: boolean;
+  dropout: number;
+  trainTestSplit: number;
 }
 
 export default function ModelConfigurator({
@@ -82,6 +85,9 @@ export default function ModelConfigurator({
       learningRate: 0.01,
       activationFunction: "tanh",
       hiddenLayers: [4],
+      normalization: false,
+      dropout: 0,
+      trainTestSplit: 80,
     });
   const [modelData, setModel] = useState<{
     model: string;
@@ -115,6 +121,15 @@ export default function ModelConfigurator({
       modelConfiguration.activationFunction,
     );
     formData.append("hidden_layers", modelConfiguration.hiddenLayers.join(","));
+    formData.append(
+      "normalization",
+      modelConfiguration.normalization.toString(),
+    );
+    formData.append("dropout", modelConfiguration.dropout.toString());
+    formData.append(
+      "train_test_split",
+      modelConfiguration.trainTestSplit.toString(),
+    );
 
     const eventSource = new EventSource(
       `http://127.0.0.1:5000/api/train_progress`,
@@ -245,8 +260,8 @@ export default function ModelConfigurator({
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid gap-4">
-                <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-5">
+                <div className="grid grid-cols-3 gap-4">
                   <div className="grid gap-1">
                     <label htmlFor="iteration" className="text-sm font-medium">
                       Iterations
@@ -297,8 +312,6 @@ export default function ModelConfigurator({
                       </SelectContent>
                     </Select>
                   </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-1">
                     <label
                       htmlFor="activation-function"
@@ -330,8 +343,19 @@ export default function ModelConfigurator({
                       </SelectContent>
                     </Select>
                   </div>
+                </div>
+                <div className="grid grid-cols-3 gap-4">
                   <div className="flex items-end justify-center space-x-2 py-3">
-                    <Checkbox id="normalization" />
+                    <Checkbox
+                      id="normalization"
+                      checked={modelConfiguration.normalization}
+                      onCheckedChange={(checked: boolean) =>
+                        setModelConfiguration({
+                          ...modelConfiguration,
+                          normalization: checked,
+                        })
+                      }
+                    />
                     <label
                       htmlFor="normalization"
                       className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -339,23 +363,26 @@ export default function ModelConfigurator({
                       Normalization
                     </label>
                   </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     <label className="text-center text-sm font-medium">
                       Train/Test set ratio
                     </label>
                     <div className="mx-auto w-[250px]">
                       <Slider
-                        defaultValue={[trainPercentage]}
+                        defaultValue={[modelConfiguration.trainTestSplit]}
                         max={90}
                         min={10}
                         step={10}
-                        onValueChange={(value) => setTrainPercentage(value[0])}
+                        onValueChange={(value) =>
+                          setModelConfiguration({
+                            ...modelConfiguration,
+                            trainTestSplit: value[0],
+                          })
+                        }
                       />
                       <div className="mt-1 flex items-center justify-between text-sm text-muted-foreground">
-                        <p>Train: {trainPercentage}%</p>
-                        <p>Test: {100 - trainPercentage}%</p>
+                        <p>Train: {modelConfiguration.trainTestSplit}%</p>
+                        <p>Test: {100 - modelConfiguration.trainTestSplit}%</p>
                       </div>
                     </div>
                   </div>
@@ -365,16 +392,19 @@ export default function ModelConfigurator({
                     </label>
                     <div className="mx-auto w-[250px]">
                       <Slider
-                        defaultValue={[dropOutPercentage]}
+                        defaultValue={[modelConfiguration.dropout]}
                         max={50}
                         min={0}
                         step={1}
                         onValueChange={(value) =>
-                          setDropOutPercentage(value[0])
+                          setModelConfiguration({
+                            ...modelConfiguration,
+                            dropout: value[0],
+                          })
                         }
                       />
                       <div className="mt-1 flex items-center justify-center text-sm text-muted-foreground">
-                        <p>{dropOutPercentage}%</p>
+                        <p>{modelConfiguration.dropout}%</p>
                       </div>
                     </div>
                   </div>
