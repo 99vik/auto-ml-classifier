@@ -34,6 +34,7 @@ import { getModel, saveModel } from "@/actions";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/components/ui/use-toast";
 import { Slider } from "@/components/ui/slider";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export interface TrainingDataType {
   status: "training" | "preparing" | "complete" | "" | "saved" | "error";
@@ -72,6 +73,7 @@ export default function ModelConfigurator({
   const [trainingData, setTrainingData] = useState<[] | TrainingDataType[]>([]);
   const [trainingTime, setTrainingTime] = useState<number>(0);
   const [trainPercentage, setTrainPercentage] = useState(80);
+  const [dropOutPercentage, setDropOutPercentage] = useState(0);
   const [modelName, setModelName] = useState<string>("");
   const [modelConfiguration, setModelConfiguration] =
     useState<ModelConfiguration>({
@@ -328,9 +330,20 @@ export default function ModelConfigurator({
                       </SelectContent>
                     </Select>
                   </div>
+                  <div className="flex items-end justify-center space-x-2 py-3">
+                    <Checkbox id="normalization" />
+                    <label
+                      htmlFor="normalization"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Normalization
+                    </label>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
-                    <label className="text-sm font-medium">
-                      Test/Train set ratio
+                    <label className="text-center text-sm font-medium">
+                      Train/Test set ratio
                     </label>
                     <div className="mx-auto w-[250px]">
                       <Slider
@@ -343,6 +356,25 @@ export default function ModelConfigurator({
                       <div className="mt-1 flex items-center justify-between text-sm text-muted-foreground">
                         <p>Train: {trainPercentage}%</p>
                         <p>Test: {100 - trainPercentage}%</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="grid">
+                    <label className="text-center text-sm font-medium">
+                      Dropout
+                    </label>
+                    <div className="mx-auto w-[250px]">
+                      <Slider
+                        defaultValue={[dropOutPercentage]}
+                        max={50}
+                        min={0}
+                        step={1}
+                        onValueChange={(value) =>
+                          setDropOutPercentage(value[0])
+                        }
+                      />
+                      <div className="mt-1 flex items-center justify-center text-sm text-muted-foreground">
+                        <p>{dropOutPercentage}%</p>
                       </div>
                     </div>
                   </div>
