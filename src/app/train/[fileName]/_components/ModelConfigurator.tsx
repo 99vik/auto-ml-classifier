@@ -33,6 +33,7 @@ import {
 import { getModel, saveModel } from "@/actions";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/components/ui/use-toast";
+import { Slider } from "@/components/ui/slider";
 
 export interface TrainingDataType {
   status: "training" | "preparing" | "complete" | "" | "saved" | "error";
@@ -70,6 +71,7 @@ export default function ModelConfigurator({
   const [status, setStatus] = useState<string>("");
   const [trainingData, setTrainingData] = useState<[] | TrainingDataType[]>([]);
   const [trainingTime, setTrainingTime] = useState<number>(0);
+  const [trainPercentage, setTrainPercentage] = useState(80);
   const [modelName, setModelName] = useState<string>("");
   const [modelConfiguration, setModelConfiguration] =
     useState<ModelConfiguration>({
@@ -85,7 +87,6 @@ export default function ModelConfigurator({
     dataByLabels: ("Number" | string[])[];
     totalParams: number;
   } | null>(null);
-
   const { toast } = useToast();
 
   function trainModel() {
@@ -267,21 +268,6 @@ export default function ModelConfigurator({
                     />
                   </div>
                   <div className="grid gap-1">
-                    <label htmlFor="batch-size" className="text-sm font-medium">
-                      Batch Size
-                    </label>
-                    <Input
-                      id="batch-size"
-                      type="number"
-                      defaultValue={32}
-                      min={1}
-                      max={256}
-                      className="w-full"
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="grid gap-1">
                     <label
                       htmlFor="learning-rate"
                       className="text-sm font-medium"
@@ -309,6 +295,8 @@ export default function ModelConfigurator({
                       </SelectContent>
                     </Select>
                   </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-1">
                     <label
                       htmlFor="activation-function"
@@ -339,6 +327,24 @@ export default function ModelConfigurator({
                         <SelectItem value="linear">Linear</SelectItem>
                       </SelectContent>
                     </Select>
+                  </div>
+                  <div className="grid gap-2">
+                    <label className="text-sm font-medium">
+                      Test/Train set ratio
+                    </label>
+                    <div className="mx-auto w-[250px]">
+                      <Slider
+                        defaultValue={[trainPercentage]}
+                        max={90}
+                        min={10}
+                        step={10}
+                        onValueChange={(value) => setTrainPercentage(value[0])}
+                      />
+                      <div className="mt-1 flex items-center justify-between text-sm text-muted-foreground">
+                        <p>Train: {trainPercentage}%</p>
+                        <p>Test: {100 - trainPercentage}%</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
