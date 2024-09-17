@@ -28,6 +28,7 @@ export async function saveModel(model: string, modelName: string) {
   );
   await fs.writeFile(filePath, model);
   revalidatePath("/models");
+  revalidatePath("/predict");
 }
 
 export async function getModel(path: string) {
@@ -72,7 +73,6 @@ export async function getCsvFileData(filePath: string) {
 }
 
 export async function getCsvFilesForDownload({ paths }: { paths: string[] }) {
-  console.log(paths);
   const files = await Promise.all(
     paths.map(async (filePath) => {
       const fileData = await fs.readFile(filePath, "utf8");
@@ -148,13 +148,13 @@ export async function readModels() {
 }
 
 export async function removeModels(filePaths: string[]) {
-  console.log(filePaths);
   await Promise.all(
     filePaths.map(async (filePath) => {
       await fs.unlink(filePath);
     }),
   );
   revalidatePath("/models");
+  revalidatePath("/predict");
 }
 
 export async function removeFiles(filePaths: string[]) {
