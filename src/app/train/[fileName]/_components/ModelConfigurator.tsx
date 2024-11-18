@@ -62,6 +62,7 @@ interface ModelConfiguration {
   normalization: boolean;
   dropout: number;
   trainTestSplit: number;
+  randomSeed: number;
 }
 
 export default function ModelConfigurator({
@@ -76,6 +77,8 @@ export default function ModelConfigurator({
   const [status, setStatus] = useState<string>("");
   const [trainingData, setTrainingData] = useState<[] | TrainingDataType[]>([]);
   const [trainingTime, setTrainingTime] = useState<number>(0);
+  const [randomSeedEnabled, sedRandomSeedEnabled] = useState<boolean>(false);
+  const [randomSeedValue, setRandomSeedValue] = useState<number>(0);
   const [trainPercentage, setTrainPercentage] = useState(80);
   const [dropOutPercentage, setDropOutPercentage] = useState(0);
   const [modelName, setModelName] = useState<string>("");
@@ -89,6 +92,7 @@ export default function ModelConfigurator({
       normalization: false,
       dropout: 0,
       trainTestSplit: 80,
+      randomSeed: 0,
     });
   const [modelData, setModel] = useState<{
     model: string;
@@ -130,6 +134,10 @@ export default function ModelConfigurator({
     formData.append(
       "train_test_split",
       modelConfiguration.trainTestSplit.toString(),
+    );
+    formData.append(
+      "random_seed",
+      (randomSeedEnabled ? randomSeedValue : false).toString(),
     );
 
     const eventSource = new EventSource(
@@ -345,25 +353,7 @@ export default function ModelConfigurator({
                     </Select>
                   </div>
                 </div>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="flex items-end justify-center space-x-2 py-3">
-                    <Checkbox
-                      id="normalization"
-                      checked={modelConfiguration.normalization}
-                      onCheckedChange={(checked: boolean) =>
-                        setModelConfiguration({
-                          ...modelConfiguration,
-                          normalization: checked,
-                        })
-                      }
-                    />
-                    <label
-                      htmlFor="normalization"
-                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                      Normalization
-                    </label>
-                  </div>
+                <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     <label className="text-center text-sm font-medium">
                       Train/Test set ratio
@@ -387,7 +377,7 @@ export default function ModelConfigurator({
                       </div>
                     </div>
                   </div>
-                  <div className="grid">
+                  <div className="grid gap-2">
                     <label className="text-center text-sm font-medium">
                       Dropout
                     </label>
@@ -408,6 +398,49 @@ export default function ModelConfigurator({
                         <p>{modelConfiguration.dropout}%</p>
                       </div>
                     </div>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex items-center justify-center space-x-2 py-3">
+                    <Checkbox
+                      id="randomSeed"
+                      checked={randomSeedEnabled}
+                      onCheckedChange={(checked: boolean) =>
+                        sedRandomSeedEnabled(checked)
+                      }
+                    />
+                    <label
+                      htmlFor="randomSeed"
+                      className="w-max text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Random seed
+                    </label>
+                    <Input
+                      className="w-20"
+                      disabled={!randomSeedEnabled}
+                      value={randomSeedValue}
+                      onChange={(e) =>
+                        setRandomSeedValue(Number(e.target.value))
+                      }
+                    />
+                  </div>
+                  <div className="flex items-end justify-center space-x-2 py-3">
+                    <Checkbox
+                      id="normalization"
+                      checked={modelConfiguration.normalization}
+                      onCheckedChange={(checked: boolean) =>
+                        setModelConfiguration({
+                          ...modelConfiguration,
+                          normalization: checked,
+                        })
+                      }
+                    />
+                    <label
+                      htmlFor="normalization"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Normalization
+                    </label>
                   </div>
                 </div>
               </div>
