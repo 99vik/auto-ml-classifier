@@ -45,8 +45,6 @@ export default function Predictor({ modelData }: { modelData: ModelData }) {
     },
   });
 
-  console.log(modelData);
-
   function handleInputChange(column: string, value: string | number) {
     setResult(null);
     setInputData((prevState: InputData) => {

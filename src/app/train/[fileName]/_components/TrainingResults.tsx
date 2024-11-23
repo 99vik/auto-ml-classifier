@@ -26,8 +26,9 @@ export default function TrainingResults({
   trainingTime,
 }: {
   data: TrainingDataType[];
-  trainingTime: number;
+  trainingTime: string;
 }) {
+  console.log(trainingTime);
   return (
     <div className="">
       <Card className="col-span-3">

@@ -76,9 +76,9 @@ export default function ModelConfigurator({
   const [uniqueOutputs, setUniqueOutputs] = useState<any>(null);
   const [status, setStatus] = useState<string>("");
   const [trainingData, setTrainingData] = useState<[] | TrainingDataType[]>([]);
-  const [trainingTime, setTrainingTime] = useState<number>(0);
+  const [trainingTime, setTrainingTime] = useState<string>("0");
   const [randomSeedEnabled, sedRandomSeedEnabled] = useState<boolean>(false);
-  const [randomSeedValue, setRandomSeedValue] = useState<number>(0);
+  const [randomSeedValue, setRandomSeedValue] = useState<number>(100);
   const [trainPercentage, setTrainPercentage] = useState(80);
   const [dropOutPercentage, setDropOutPercentage] = useState(0);
   const [modelName, setModelName] = useState<string>("");
@@ -92,7 +92,7 @@ export default function ModelConfigurator({
       normalization: false,
       dropout: 0,
       trainTestSplit: 80,
-      randomSeed: 0,
+      randomSeed: 100,
     });
   const [modelData, setModel] = useState<{
     model: string;
@@ -105,7 +105,7 @@ export default function ModelConfigurator({
   function trainModel() {
     setStatus("preparing");
     setTrainingData([]);
-    setTrainingTime(0);
+    setTrainingTime("0");
 
     const startTime = Date.now();
     let timerInterval: NodeJS.Timeout;
@@ -141,7 +141,7 @@ export default function ModelConfigurator({
     );
 
     const eventSource = new EventSource(
-      `http://127.0.0.1:5000/api/train_progress`,
+      `http://127.0.0.1:5000/api/train-progress`,
     );
 
     eventSource.onmessage = (event) => {
@@ -164,7 +164,7 @@ export default function ModelConfigurator({
       if (data.status === "error") {
         eventSource.close();
         clearInterval(timerInterval);
-        setTrainingTime(0);
+        setTrainingTime("0");
         setTrainingData([]);
         setStatus("");
         toast({
@@ -185,11 +185,11 @@ export default function ModelConfigurator({
     };
 
     timerInterval = setInterval(() => {
-      const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
-      setTrainingTime(elapsedTime);
-    }, 1000);
+      const elapsedTime = (Date.now() - startTime) / 1000;
+      setTrainingTime(elapsedTime.toFixed(2));
+    }, 100);
 
-    fetch("http://127.0.0.1:5000/api/train_model", {
+    fetch("http://127.0.0.1:5000/api/train-model", {
       method: "POST",
       body: formData,
     });
@@ -424,7 +424,7 @@ export default function ModelConfigurator({
                       }
                     />
                   </div>
-                  <div className="flex items-end justify-center space-x-2 py-3">
+                  <div className="flex items-center justify-center space-x-2 py-3">
                     <Checkbox
                       id="normalization"
                       checked={modelConfiguration.normalization}
@@ -558,11 +558,11 @@ export default function ModelConfigurator({
                 <CardContent>
                   <div className="flex flex-col items-center justify-center text-xl font-medium">
                     <p>
-                      {Math.floor(trainingTime / 60)
+                      {Math.floor(Number(trainingTime) / 60)
                         .toString()
                         .padStart(2, "0")}{" "}
                       :{" "}
-                      {(trainingTime % 60)
+                      {(Number(trainingTime) % 60)
                         .toFixed(0)
                         .toString()
                         .padStart(2, "0")}
